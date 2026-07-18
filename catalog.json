@@ -111,7 +111,10 @@
           "outline": null,
           "slides": []
         }
-      ]
+      ],
+      "order": 1,
+      "description": "The deepest idea in modern physics: that information is physical — and that the world, underneath, is made of it. Twelve chapters, free to read.",
+      "epubUrl": "https://github.com/kmay89/everything/releases/latest/download/everything-that-glows.epub"
     },
     {
       "slug": "grows",
@@ -268,7 +271,10 @@
           "outline": null,
           "slides": []
         }
-      ]
+      ],
+      "order": 2,
+      "description": "A history of mathematics and what it actually is — from a notch on a bone to the proofs that run the modern world, and the people who built the language.",
+      "epubUrl": "https://github.com/kmay89/everythingthatgrows/releases/latest/download/everything-that-grows.epub"
     },
     {
       "slug": "knows",
@@ -425,7 +431,10 @@
           "outline": null,
           "slides": []
         }
-      ]
+      ],
+      "order": 3,
+      "description": "On the mind: what consciousness is, who and what has it, whether a machine could — from your own certain experience to the threshold where the universe knows itself.",
+      "epubUrl": "https://github.com/kmay89/everythingthatknows/releases/latest/download/everything-that-knows.epub"
     },
     {
       "slug": "shows",
@@ -542,7 +551,10 @@
           "outline": null,
           "slides": []
         }
-      ]
+      ],
+      "order": 4,
+      "description": "On perception and the ethics of seeing: to perceive a thing is to take a kind of power over it, and what we owe it begins at the moment of seeing.",
+      "epubUrl": "https://github.com/kmay89/everythingthatshows/releases/latest/download/everything-that-shows.epub"
     },
     {
       "slug": "goes",
@@ -554,7 +566,16 @@
       "readUrl": null,
       "releaseTag": "media-goes",
       "extras": [],
-      "chapters": []
+      "chapters": [],
+      "order": 5,
+      "description": "The fifth book is being written. Audio previews will appear here first.",
+      "epubUrl": null
     }
-  ]
+  ],
+  "series": {
+    "name": "The Everything Series",
+    "line": "Matter, mathematics, mind, perception — and what comes next.",
+    "author": "Karl Meves",
+    "publisher": "Errerlabs"
+  }
 }

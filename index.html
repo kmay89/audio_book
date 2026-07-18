@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Everything, Read Aloud — Errerlabs Audio</title>
-<meta name="description" content="Listen to the Everything series — chapter-by-chapter audio companions to the books by Karl Meves. Free, in your browser, remembers where you left off.">
+<title>The Everything Library — read & listen</title>
+<meta name="description" content="The Everything series by Karl Meves — five books on matter, mathematics, mind, and perception. Read them free in your browser, listen chapter by chapter, download the ebooks. Your place is remembered.">
 <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#16161a" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta property="og:title" content="Everything, Read Aloud">
-<meta property="og:description" content="Chapter-by-chapter audio companions to the Everything series. Free, in your browser.">
+<meta property="og:title" content="The Everything Library">
+<meta property="og:description" content="Five books on matter, mathematics, mind, and perception — read free, listen chapter by chapter, or download the ebooks.">
 <style>
 :root{
   --paper:#fbfaf7; --ink:#1b1b1f; --muted:#5f5d57; --faint:#8a877e;
@@ -64,10 +64,26 @@ h1{font-size:1.6rem;margin:.4rem 0 .2rem}
 .continue .go{flex:0 0 auto;font-size:1.5rem;color:var(--accent-bright)}
 
 /* ---- book cards ---- */
+.eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);margin:0 0 .1rem}
+.eyebrow em{font-style:normal}
 .books{display:grid;gap:.9rem;grid-template-columns:1fr}
-@media(min-width:560px){.books{grid-template-columns:1fr 1fr}}
-.bookcard{display:flex;gap:.9rem;text-align:left;border:1px solid var(--rule);border-radius:14px;padding:.9rem;align-items:center;background:transparent}
+.bookcard{display:flex;gap:.95rem;text-align:left;border:1px solid var(--rule);border-radius:14px;padding:1rem;align-items:flex-start;background:transparent;cursor:pointer}
 .bookcard:hover{border-color:var(--accent-bright)}
+.bookcard .ord{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--faint)}
+.bookcard .desc{font-size:.86rem;color:var(--muted);margin:.3rem 0 0;line-height:1.5}
+.cardactions{display:flex;gap:1.1rem;margin-top:.55rem;font-size:.84rem;flex-wrap:wrap}
+.cardactions a,.cardactions button{color:var(--accent-bright);padding:0}
+.cardactions .soon{color:var(--faint)}
+.finished-chip{display:inline-block;font-size:.72rem;color:var(--accent-bright);border:1px solid var(--accent-bright);border-radius:999px;padding:.05rem .5rem;margin-left:.4rem;vertical-align:middle}
+
+/* ---- journey card ---- */
+.journey{border:1px solid var(--rule);border-radius:14px;padding:.85rem .95rem;margin:0 0 1.4rem;background:var(--note-bg)}
+.journey .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);margin-bottom:.35rem}
+.journey .line{font-size:.9rem}
+.journey .bar{margin-top:.5rem}
+.jbooks{display:flex;gap:.45rem;margin-top:.6rem}
+.jb{flex:1;height:5px;border-radius:3px;background:var(--rule);overflow:hidden}
+.jb>i{display:block;height:100%;background:var(--jb,var(--accent-bright))}
 .art{background:linear-gradient(150deg,var(--a1,#34346b),var(--a2,#5757c8));border-radius:10px;position:relative;overflow:hidden;flex:0 0 4.4rem;height:4.4rem}
 .art::after{content:"";position:absolute;left:12%;right:12%;bottom:16%;height:2px;
   background:linear-gradient(90deg,#e66,#ea3,#ec2,#5b5,#4ac,#66e,#a6e);border-radius:2px;opacity:.9}
@@ -173,18 +189,22 @@ footer .spectral{margin-bottom:.8rem}
 <a class="skip" href="#main">Skip to content</a>
 <header class="top">
   <div class="top-inner">
-    <span class="wordmark"><a href="#" id="homelink">Everything, Read Aloud</a></span>
-    <span class="top-sub">audio companions · Errerlabs</span>
+    <span class="wordmark"><a href="#" id="homelink">The Everything Library</a></span>
+    <span class="top-sub">read &amp; listen · Errerlabs</span>
   </div>
   <hr class="spectral">
 </header>
 
 <main id="main">
   <section id="view-home" class="view active" aria-label="Library">
-    <h1>Listen to the books</h1>
-    <p class="lede">Chapter-by-chapter audio companions to the <em>Everything</em> series.
-      Pick a chapter, press play — your place is remembered on this device, and it works on the lock screen and over Bluetooth. Or read the full text any time.</p>
+    <p class="eyebrow">The <em>Everything</em> series · Karl Meves</p>
+    <h1>Five books, one journey</h1>
+    <p class="lede">Matter, mathematics, mind, perception — and what comes next. Every book is free
+      to read in your browser, and chapter-by-chapter audio lets you listen instead: on the lock
+      screen, over Bluetooth, with your place remembered on this device. Read, listen, or both —
+      the series rewards being finished.</p>
     <div id="continue-slot"></div>
+    <div id="journey-slot"></div>
     <div class="books" id="booklist"></div>
   </section>
 
@@ -354,22 +374,63 @@ function renderHome(){
     }
   } catch(e){}
 
+  renderJourney();
+
   const list = $('#booklist'); list.innerHTML = '';
   for (const b of CAT.books){
     const withAudio = b.chapters.filter(c => c.audio).length + (b.extras || []).filter(x => x.audio).length;
     const total = b.chapters.reduce((a,c) => a + (c.audio ? c.audio.duration : 0), 0)
                 + (b.extras || []).reduce((a,x) => a + (x.audio ? x.audio.duration : 0), 0);
     const pr = bookProgress(b);
-    const el = document.createElement('button');
+    const finished = pr && pr.done === pr.total;
+    const el = document.createElement('div');
     el.className = 'bookcard';
+    el.setAttribute('role', 'link');
+    el.tabIndex = 0;
+    el.setAttribute('aria-label', b.title);
     el.innerHTML = `<div class="art" style="${artStyle(b)}"></div>
-      <div class="meta"><div class="t">${esc(b.title)}</div>
+      <div class="meta">
+      <div class="ord">Book ${b.order || ''}</div>
+      <div class="t">${esc(b.title)}${finished ? '<span class="finished-chip">finished ✦</span>' : ''}</div>
       <div class="tag">${esc(b.tagline)}</div>
-      <div class="stat">${withAudio ? `${withAudio} episode${withAudio === 1 ? '' : 's'}${total ? ' · ' + fmtLong(total) : ''}` : (b.readUrl ? 'audio coming — read now' : 'coming soon')}</div>
-      ${pr && pr.done ? `<div class="bar"><i style="width:${Math.round(100*pr.done/pr.total)}%"></i></div>` : ''}</div>`;
-    el.addEventListener('click', () => openBook(b.slug));
+      ${b.description ? `<p class="desc">${esc(b.description)}</p>` : ''}
+      <div class="stat">${withAudio ? `${withAudio} episode${withAudio === 1 ? '' : 's'} in audio${total ? ' · ' + fmtLong(total) : ''}` : (b.readUrl ? `${b.chapters.length} chapter${b.chapters.length === 1 ? '' : 's'} · audio coming` : 'coming soon')}</div>
+      ${pr && pr.done ? `<div class="bar"><i style="width:${Math.round(100*pr.done/pr.total)}%"></i></div>` : ''}
+      <div class="cardactions">
+        ${withAudio ? `<button data-act="listen">Listen ▸</button>` : ''}
+        ${b.readUrl ? `<a href="${esc(safeUrl(b.readUrl))}" target="_blank" rel="noopener">Read online ↗</a>` : ''}
+        ${b.epubUrl ? `<a href="${esc(safeUrl(b.epubUrl))}" rel="noopener">EPUB ↓</a>` : ''}
+        ${!b.readUrl && !withAudio ? `<span class="soon">in the works</span>` : ''}
+      </div></div>`;
+    const open = () => openBook(b.slug);
+    el.addEventListener('click', open);
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); } });
+    el.querySelectorAll('.cardactions a').forEach(a => a.addEventListener('click', e => e.stopPropagation()));
     list.appendChild(el);
   }
+}
+
+function renderJourney(){
+  const slot = $('#journey-slot'); slot.innerHTML = '';
+  let done = 0, total = 0, booksDone = 0, booksStarted = 0;
+  const bars = [];
+  for (const b of CAT.books){
+    const pr = bookProgress(b);
+    const w = pr ? Math.round(100 * pr.done / pr.total) : 0;
+    bars.push(`<span class="jb" title="${esc(b.title)}" style="--jb:${esc(b.accentBright)}"><i style="width:${w}%"></i></span>`);
+    if (!pr) continue;
+    done += pr.done; total += pr.total;
+    if (pr.done) booksStarted++;
+    if (pr.done === pr.total) booksDone++;
+  }
+  if (!done) return; // no listening yet — the cards speak for themselves
+  const el = document.createElement('div');
+  el.className = 'journey';
+  el.innerHTML = `<div class="k">Your journey</div>
+    <div class="line">${done} of ${total} audio chapter${total === 1 ? '' : 's'} finished
+    ${booksDone ? ` · ${booksDone} book${booksDone === 1 ? '' : 's'} complete` : ''}${booksStarted > booksDone ? ` · ${booksStarted - booksDone} in progress` : ''}</div>
+    <div class="jbooks" aria-hidden="true">${bars.join('')}</div>`;
+  slot.appendChild(el);
 }
 
 function rowHTML(it){
@@ -508,7 +569,7 @@ function cueTrack(it, autoplay){
   $('#playerbar').classList.add('visible');
   LS.set('ab-last', JSON.stringify({book: it.book.slug, slug: it.slug}));
   setMediaSession(it);
-  document.title = it.title + ' — Everything, Read Aloud';
+  document.title = it.title + ' — The Everything Library';
   if (curBookSlug === it.book.slug) history.replaceState(null, '', '#' + it.key);
   refreshRows();
   if (autoplay) safePlay();
@@ -663,7 +724,7 @@ $('#btn-close').addEventListener('click', () => {
   audio.pause(); audio.removeAttribute('src'); audio.load();
   cur = null;
   $('#playerbar').classList.remove('visible');
-  document.title = 'Everything, Read Aloud — Errerlabs Audio';
+  document.title = 'The Everything Library — read & listen';
   refreshRows();
 });
 $('#btn-back').addEventListener('click', openHome);

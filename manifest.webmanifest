@@ -1,7 +1,7 @@
 {
-  "name": "Everything, Read Aloud",
-  "short_name": "Everything Audio",
-  "description": "Audio companions to the Everything series by Karl Meves.",
+  "name": "The Everything Library",
+  "short_name": "Everything",
+  "description": "The Everything series by Karl Meves — read free, listen chapter by chapter, download the ebooks.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
