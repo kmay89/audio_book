@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Accessibility · The Everything Library</title>
+<meta name="description" content="Accessibility statement for The Everything Library: keyboard controls, screen-reader labels, themes, text sizing, reduced motion, and how to report an issue.">
+<meta name="robots" content="all">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16161a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://hear-my-book.com/accessibility.html">
+<link rel="icon" href="icon-192.png" type="image/png">
+<script>
+(function(){try{var t=localStorage.getItem("ab-theme");if(t==="light"||t==="dark"||t==="warm")document.documentElement.setAttribute("data-theme",t);
+var s=localStorage.getItem("ab-textsize");if(s==="s"||s==="l"||s==="xl")document.documentElement.setAttribute("data-textsize",s);}catch(e){}})();
+</script>
+<style>
+:root{
+  --paper:#fbfaf7; --ink:#1b1b1f; --muted:#5f5d57; --faint:#8a877e;
+  --rule:#e3e0d6; --accent:#34346b; --accent-bright:#5757c8; --note-bg:#f3f1ea;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,Cambria,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{--paper:#16161a;--ink:#e9e7e0;--muted:#a6a39a;--faint:#7d7a72;
+    --rule:#2c2c33;--accent:#a9a9f0;--accent-bright:#c5c5ff;--note-bg:#1f1f25;}
+}
+html[data-theme="light"]{--paper:#fbfaf7;--ink:#1b1b1f;--muted:#5f5d57;--faint:#8a877e;
+  --rule:#e3e0d6;--accent:#34346b;--accent-bright:#5757c8;--note-bg:#f3f1ea;}
+html[data-theme="dark"]{--paper:#16161a;--ink:#e9e7e0;--muted:#a6a39a;--faint:#7d7a72;
+  --rule:#2c2c33;--accent:#a9a9f0;--accent-bright:#c5c5ff;--note-bg:#1f1f25;}
+html[data-theme="warm"]{--paper:#f3e9d2;--ink:#3b2f22;--muted:#6f5d44;--faint:#9b8763;
+  --rule:#e2d6b8;--accent:#34346b;--accent-bright:#5757c8;--note-bg:#ece0c4;}
+html[data-textsize="s"]{font-size:15px}
+html[data-textsize="l"]{font-size:17.5px}
+html[data-textsize="xl"]{font-size:19px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);
+  font-size:1.1rem;line-height:1.7;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.wrap{max-width:40rem;margin:0 auto;padding:0 1.5rem}
+a{color:var(--accent-bright)}
+.spectral{height:3px;border:0;margin:0;background:linear-gradient(90deg,#c33 0%,#d80 18%,#ca0 33%,#3a3 50%,#28a 67%,#33c 84%,#63c 100%);opacity:.85}
+header.top{padding:2.6rem 0 1rem}
+.eyebrow{font-family:var(--sans);font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--accent-bright);font-weight:600;margin:0 0 1rem}
+h1{font-family:var(--serif);font-size:clamp(1.9rem,6vw,2.6rem);line-height:1.08;letter-spacing:-.02em;
+  font-weight:600;margin:.2rem 0 .4rem}
+.updated{font-family:var(--sans);font-size:.78rem;color:var(--faint);margin:0 0 1.4rem}
+h2{font-family:var(--sans);font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);
+  font-weight:600;margin:2.4rem 0 .8rem}
+p{margin:0 0 1.1rem}
+ul{margin:0 0 1.2rem;padding-left:1.2rem}
+li{margin:0 0 .5rem}
+code{font-size:.92em;background:var(--note-bg);border:1px solid var(--rule);border-radius:4px;padding:.05em .35em}
+.lead{font-size:1.18rem;line-height:1.5}
+.panel{background:var(--note-bg);border:1px solid var(--rule);border-radius:14px;padding:1.3rem 1.4rem;margin:1.4rem 0}
+.panel p:last-child{margin-bottom:0}
+footer{border-top:1px solid var(--rule);margin-top:2.6rem;padding:1.8rem 0 3.4rem;
+  font-family:var(--sans);font-size:.8rem;color:var(--faint);line-height:1.8}
+footer a{color:var(--faint);text-decoration:none;border-bottom:1px solid var(--rule)}
+footer a:hover{color:var(--accent-bright);border-color:var(--accent-bright)}
+.back{display:inline-block;font-family:var(--sans);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent-bright);text-decoration:none;margin-bottom:1.6rem}
+</style>
+</head>
+<body>
+<hr class="spectral">
+<div class="wrap">
+<header class="top">
+  <a class="back" href="./">‹ The Everything Library</a>
+  <p class="eyebrow">Accessibility</p>
+  <h1>Built to be read, heard, and operated by everyone</h1>
+  <p class="updated">Last updated July 18, 2026</p>
+</header>
+<main>
+
+<p class="lead">The library is a small, dependency-free web page, and accessibility is part of
+its design rather than an afterthought. This page says what works, and how to tell us when
+something doesn't.</p>
+
+<h2>What the player supports</h2>
+<ul>
+  <li><strong>Keyboard</strong>: <code>Space</code> play/pause, <code>←</code> back 15s,
+    <code>→</code> forward 30s, <code>Esc</code> closes panels. Every control is reachable by
+    <code>Tab</code> with a visible focus outline.</li>
+  <li><strong>Screen readers</strong>: controls carry ARIA labels, status messages are announced
+    politely, and dialogs are marked as such.</li>
+  <li><strong>System &amp; lock-screen controls</strong>: playback integrates with the Media
+    Session API, so hardware keys, headphones, Bluetooth devices, and the lock screen can drive it.</li>
+  <li><strong>Display settings</strong> (the <em>Aa</em> button): light, warm, and dark themes,
+    and four text sizes, remembered on your device. The site also follows your system's
+    dark-mode preference automatically.</li>
+  <li><strong>Reduced motion</strong>: animations are disabled when your system asks for
+    reduced motion.</li>
+  <li><strong>Listening itself</strong>: every published chapter can be listened to instead of
+    read, with adjustable playback speed from 0.75× to 2×.</li>
+</ul>
+
+<h2>Known limitations</h2>
+<ul>
+  <li>Slide images currently carry generic alternative text; chapter outlines provide the
+    equivalent content in text form where available.</li>
+  <li>The audio editions are AI-narrated and do not yet include synchronized transcripts —
+    the full text of each book is available at its "Read" link.</li>
+</ul>
+
+<h2>Tell us what's broken</h2>
+<p>If anything on this site is hard to use with your setup, please write to
+<a href="mailto:errerlabs@gmail.com">errerlabs@gmail.com</a> and describe what happened and
+what you were using. Reports are genuinely welcome and fixed with priority.</p>
+
+</main>
+<footer>
+  <p><a href="privacy.html">Privacy</a> · <a href="legal.html">Legal &amp; copyright</a> ·
+  <a href="accessibility.html">Accessibility</a> · <a href="mailto:errerlabs@gmail.com">Contact</a></p>
+  <p>© 2026 Karl Meves · Published by Errerlabs.</p>
+</footer>
+</div>
+</body>
+</html>

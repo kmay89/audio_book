@@ -7,7 +7,17 @@
 <meta name="description" content="The Everything series by Karl Meves — five books on matter, mathematics, mind, and perception. Read them free in your browser, listen chapter by chapter, download the ebooks. Your place is remembered.">
 <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#16161a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://hear-my-book.com/">
+<meta property="og:url" content="https://hear-my-book.com/">
 <link rel="manifest" href="manifest.webmanifest">
+<script>
+(function(){try{
+  var t=localStorage.getItem('ab-theme');
+  if(t==='light'||t==='dark'||t==='warm')document.documentElement.setAttribute('data-theme',t);
+  var s=localStorage.getItem('ab-textsize');
+  if(s==='s'||s==='l'||s==='xl')document.documentElement.setAttribute('data-textsize',s);
+}catch(e){}})();
+</script>
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta property="og:title" content="The Everything Library">
@@ -25,6 +35,15 @@
   :root{--paper:#16161a; --ink:#e9e7e0; --muted:#a6a39a; --faint:#7d7a72;
     --rule:#2c2c33; --accent:#a9a9f0; --accent-bright:#c5c5ff; --note-bg:#1f1f25; --danger:#e07070;}
 }
+html[data-theme="light"]{--paper:#fbfaf7;--ink:#1b1b1f;--muted:#5f5d57;--faint:#8a877e;
+  --rule:#e3e0d6;--accent:#34346b;--accent-bright:#5757c8;--note-bg:#f3f1ea;--danger:#a33}
+html[data-theme="dark"]{--paper:#16161a;--ink:#e9e7e0;--muted:#a6a39a;--faint:#7d7a72;
+  --rule:#2c2c33;--accent:#a9a9f0;--accent-bright:#c5c5ff;--note-bg:#1f1f25;--danger:#e07070}
+html[data-theme="warm"]{--paper:#f3e9d2;--ink:#3b2f22;--muted:#6f5d44;--faint:#9b8763;
+  --rule:#e2d6b8;--accent:#34346b;--accent-bright:#5757c8;--note-bg:#ece0c4;--danger:#a33}
+html[data-textsize="s"]{font-size:15px}
+html[data-textsize="l"]{font-size:17.5px}
+html[data-textsize="xl"]{font-size:19px}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{
@@ -43,7 +62,15 @@ header.top{position:sticky;top:0;z-index:30;background:var(--paper);border-botto
 .top-inner{max-width:var(--measure);margin:0 auto;padding:.8rem 1rem .6rem;display:flex;align-items:baseline;gap:.6rem}
 .wordmark{font-family:var(--serif);font-size:1.15rem;font-weight:700;letter-spacing:.01em}
 .wordmark a{color:inherit}
-.top-sub{color:var(--faint);font-size:.8rem}
+.top-sub{color:var(--faint);font-size:.8rem;flex:1}
+.aa-btn{border:1px solid var(--rule);border-radius:8px;padding:.15rem .55rem;font-size:.88rem;color:var(--muted)}
+.aa-btn:hover,.aa-btn[aria-expanded="true"]{border-color:var(--accent-bright);color:var(--accent-bright)}
+.aa-panel{max-width:var(--measure);margin:0 auto;padding:.6rem 1rem .75rem;border-bottom:1px solid var(--rule)}
+.aa-row{display:flex;align-items:center;gap:.45rem;margin:.3rem 0}
+.aa-k{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);min-width:4.6rem}
+.aa-row button{border:1px solid var(--rule);border-radius:999px;padding:.2rem .75rem;font-size:.85rem;color:var(--muted)}
+.aa-row button:hover{border-color:var(--accent-bright)}
+.aa-row button[aria-pressed="true"]{border-color:var(--accent-bright);color:var(--accent-bright);font-weight:600}
 
 main{max-width:var(--measure);margin:0 auto;padding:1.2rem 1rem 2rem}
 .view{display:none}
@@ -181,6 +208,8 @@ h1{font-size:1.6rem;margin:.4rem 0 .2rem}
 
 footer{max-width:var(--measure);margin:2.5rem auto 0;padding:0 1rem;color:var(--faint);font-size:.78rem}
 footer .spectral{margin-bottom:.8rem}
+.ftr-links{margin-bottom:.5rem}
+.ftr-links a{color:var(--muted)}
 .skip{position:absolute;left:-9999px;top:0;background:var(--paper);padding:.5rem 1rem;z-index:100}
 .skip:focus{left:0}
 </style>
@@ -191,8 +220,17 @@ footer .spectral{margin-bottom:.8rem}
   <div class="top-inner">
     <span class="wordmark"><a href="#" id="homelink">The Everything Library</a></span>
     <span class="top-sub">read &amp; listen · Errerlabs</span>
+    <button id="btn-aa" class="aa-btn" aria-label="Display settings" aria-haspopup="true" aria-expanded="false">Aa</button>
   </div>
   <hr class="spectral">
+  <div class="aa-panel" id="aa-panel" role="group" aria-label="Display settings" hidden>
+    <div class="aa-row"><span class="aa-k">Theme</span>
+      <button data-theme-set="auto">Auto</button><button data-theme-set="light">Light</button>
+      <button data-theme-set="warm">Warm</button><button data-theme-set="dark">Dark</button></div>
+    <div class="aa-row"><span class="aa-k">Text size</span>
+      <button data-size-set="s">S</button><button data-size-set="m">M</button>
+      <button data-size-set="l">L</button><button data-size-set="xl">XL</button></div>
+  </div>
 </header>
 
 <main id="main">
@@ -228,8 +266,38 @@ footer .spectral{margin-bottom:.8rem}
 
 <footer>
   <hr class="spectral">
-  <p>By Karl Meves · Published by Errerlabs · The books are free to read at their own sites; audio editions are AI-narrated companions. Nothing is tracked — your listening position lives only on this device.</p>
+  <nav class="ftr-links" aria-label="Site">
+    <a href="privacy.html">Privacy</a> · <a href="legal.html">Legal &amp; copyright</a> ·
+    <a href="accessibility.html">Accessibility</a> · <a href="mailto:errerlabs@gmail.com">Contact</a>
+  </nav>
+  <p>© 2026 Karl Meves · Published by <strong>Errerlabs</strong>. The books are free to read and
+  listen to here — not to redistribute. Audio editions are AI-narrated from the author's text.
+  Nothing is tracked: your listening position and settings live only on this device.</p>
 </footer>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {"@type": "Organization", "@id": "https://hear-my-book.com/#errerlabs",
+     "name": "Errerlabs", "email": "errerlabs@gmail.com", "url": "https://hear-my-book.com/"},
+    {"@type": "Person", "@id": "https://hear-my-book.com/#karl-meves", "name": "Karl Meves"},
+    {"@type": "WebSite", "url": "https://hear-my-book.com/", "name": "The Everything Library",
+     "description": "The Everything series by Karl Meves — read free, listen chapter by chapter, download the ebooks.",
+     "publisher": {"@id": "https://hear-my-book.com/#errerlabs"}},
+    {"@type": "BookSeries", "name": "The Everything Series",
+     "author": {"@id": "https://hear-my-book.com/#karl-meves"},
+     "publisher": {"@id": "https://hear-my-book.com/#errerlabs"}},
+    {"@type": "Book", "name": "Everything That Glows", "url": "https://everythingthatglows.com/",
+     "author": {"@id": "https://hear-my-book.com/#karl-meves"}, "publisher": {"@id": "https://hear-my-book.com/#errerlabs"}},
+    {"@type": "Book", "name": "Everything That Grows: The Oldest Language", "url": "https://everything-that-grows.com/",
+     "author": {"@id": "https://hear-my-book.com/#karl-meves"}, "publisher": {"@id": "https://hear-my-book.com/#errerlabs"}},
+    {"@type": "Book", "name": "Everything That Knows: The Last Question", "url": "https://everythingthatknows.com/",
+     "author": {"@id": "https://hear-my-book.com/#karl-meves"}, "publisher": {"@id": "https://hear-my-book.com/#errerlabs"}},
+    {"@type": "Book", "name": "Everything That Shows: The Weight of Looking", "url": "https://everythingthatshows.com/",
+     "author": {"@id": "https://hear-my-book.com/#karl-meves"}, "publisher": {"@id": "https://hear-my-book.com/#errerlabs"}}
+  ]
+}
+</script>
 
 <div id="playerbar" aria-label="Player">
   <div class="pb-inner">
@@ -817,13 +885,48 @@ function openSlides(it){
 $('#slides-close').addEventListener('click', () => $('#slides-overlay').classList.remove('open'));
 $('#slides-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.classList.remove('open'); });
 
+// display settings (Aa): theme + text size, persisted, applied pre-paint by the head script
+const aaBtn = $('#btn-aa'), aaPanel = $('#aa-panel');
+function applyTheme(t){
+  if (t === 'auto') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', t);
+  if (t === 'auto') LS.del('ab-theme'); else LS.set('ab-theme', t);
+  const dark = t === 'dark' || (t === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
+  const color = t === 'warm' ? '#f3e9d2' : dark ? '#16161a' : '#fbfaf7';
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.setAttribute('content', color));
+  syncAa();
+}
+function applySize(s){
+  if (s === 'm') document.documentElement.removeAttribute('data-textsize');
+  else document.documentElement.setAttribute('data-textsize', s);
+  if (s === 'm') LS.del('ab-textsize'); else LS.set('ab-textsize', s);
+  syncAa();
+}
+function syncAa(){
+  const t = LS.get('ab-theme', 'auto'), s = LS.get('ab-textsize', 'm');
+  aaPanel.querySelectorAll('[data-theme-set]').forEach(b => b.setAttribute('aria-pressed', b.dataset.themeSet === t ? 'true' : 'false'));
+  aaPanel.querySelectorAll('[data-size-set]').forEach(b => b.setAttribute('aria-pressed', b.dataset.sizeSet === s ? 'true' : 'false'));
+}
+aaBtn.addEventListener('click', () => {
+  const open = aaPanel.hidden;
+  aaPanel.hidden = !open;
+  aaBtn.setAttribute('aria-expanded', String(open));
+  if (open) syncAa();
+});
+aaPanel.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.themeSet) applyTheme(b.dataset.themeSet);
+  if (b.dataset.sizeSet) applySize(b.dataset.sizeSet);
+});
+syncAa();
+
 // keyboard
 document.addEventListener('keydown', e => {
   if (e.target.matches('input,textarea,select') || e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key === ' '){ e.preventDefault(); togglePlay(); }
   else if (e.key === 'ArrowLeft') seekBy(-15);
   else if (e.key === 'ArrowRight') seekBy(30);
-  else if (e.key === 'Escape'){ closeMenus(); $('#slides-overlay').classList.remove('open'); }
+  else if (e.key === 'Escape'){ closeMenus(); $('#slides-overlay').classList.remove('open'); aaPanel.hidden = true; aaBtn.setAttribute('aria-expanded', 'false'); }
 });
 
 // lifecycle: never lose the listener's place

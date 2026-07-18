@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Page not found · The Everything Library</title>
+<meta name="description" content="Page not found.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16161a" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="icon-192.png" type="image/png">
+<script>
+(function(){try{var t=localStorage.getItem("ab-theme");if(t==="light"||t==="dark"||t==="warm")document.documentElement.setAttribute("data-theme",t);
+var s=localStorage.getItem("ab-textsize");if(s==="s"||s==="l"||s==="xl")document.documentElement.setAttribute("data-textsize",s);}catch(e){}})();
+</script>
+<style>
+:root{
+  --paper:#fbfaf7; --ink:#1b1b1f; --muted:#5f5d57; --faint:#8a877e;
+  --rule:#e3e0d6; --accent:#34346b; --accent-bright:#5757c8; --note-bg:#f3f1ea;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,Cambria,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{--paper:#16161a;--ink:#e9e7e0;--muted:#a6a39a;--faint:#7d7a72;
+    --rule:#2c2c33;--accent:#a9a9f0;--accent-bright:#c5c5ff;--note-bg:#1f1f25;}
+}
+html[data-theme="light"]{--paper:#fbfaf7;--ink:#1b1b1f;--muted:#5f5d57;--faint:#8a877e;
+  --rule:#e3e0d6;--accent:#34346b;--accent-bright:#5757c8;--note-bg:#f3f1ea;}
+html[data-theme="dark"]{--paper:#16161a;--ink:#e9e7e0;--muted:#a6a39a;--faint:#7d7a72;
+  --rule:#2c2c33;--accent:#a9a9f0;--accent-bright:#c5c5ff;--note-bg:#1f1f25;}
+html[data-theme="warm"]{--paper:#f3e9d2;--ink:#3b2f22;--muted:#6f5d44;--faint:#9b8763;
+  --rule:#e2d6b8;--accent:#34346b;--accent-bright:#5757c8;--note-bg:#ece0c4;}
+html[data-textsize="s"]{font-size:15px}
+html[data-textsize="l"]{font-size:17.5px}
+html[data-textsize="xl"]{font-size:19px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);
+  font-size:1.1rem;line-height:1.7;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.wrap{max-width:40rem;margin:0 auto;padding:0 1.5rem}
+a{color:var(--accent-bright)}
+.spectral{height:3px;border:0;margin:0;background:linear-gradient(90deg,#c33 0%,#d80 18%,#ca0 33%,#3a3 50%,#28a 67%,#33c 84%,#63c 100%);opacity:.85}
+header.top{padding:2.6rem 0 1rem}
+.eyebrow{font-family:var(--sans);font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--accent-bright);font-weight:600;margin:0 0 1rem}
+h1{font-family:var(--serif);font-size:clamp(1.9rem,6vw,2.6rem);line-height:1.08;letter-spacing:-.02em;
+  font-weight:600;margin:.2rem 0 .4rem}
+.updated{font-family:var(--sans);font-size:.78rem;color:var(--faint);margin:0 0 1.4rem}
+h2{font-family:var(--sans);font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);
+  font-weight:600;margin:2.4rem 0 .8rem}
+p{margin:0 0 1.1rem}
+ul{margin:0 0 1.2rem;padding-left:1.2rem}
+li{margin:0 0 .5rem}
+code{font-size:.92em;background:var(--note-bg);border:1px solid var(--rule);border-radius:4px;padding:.05em .35em}
+.lead{font-size:1.18rem;line-height:1.5}
+.panel{background:var(--note-bg);border:1px solid var(--rule);border-radius:14px;padding:1.3rem 1.4rem;margin:1.4rem 0}
+.panel p:last-child{margin-bottom:0}
+footer{border-top:1px solid var(--rule);margin-top:2.6rem;padding:1.8rem 0 3.4rem;
+  font-family:var(--sans);font-size:.8rem;color:var(--faint);line-height:1.8}
+footer a{color:var(--faint);text-decoration:none;border-bottom:1px solid var(--rule)}
+footer a:hover{color:var(--accent-bright);border-color:var(--accent-bright)}
+.back{display:inline-block;font-family:var(--sans);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent-bright);text-decoration:none;margin-bottom:1.6rem}
+</style>
+</head>
+<body>
+<hr class="spectral">
+<div class="wrap">
+<header class="top">
+  <a class="back" href="./">‹ The Everything Library</a>
+  <p class="eyebrow">Not found</p>
+  <h1>This page isn't in the library</h1>
+  
+</header>
+<main>
+
+<p class="lead">Whatever you were looking for isn't on this shelf. The library itself is one
+page — everything starts there.</p>
+<p><a href="./">Go to the library ›</a></p>
+
+</main>
+<footer>
+  <p><a href="privacy.html">Privacy</a> · <a href="legal.html">Legal &amp; copyright</a> ·
+  <a href="accessibility.html">Accessibility</a> · <a href="mailto:errerlabs@gmail.com">Contact</a></p>
+  <p>© 2026 Karl Meves · Published by Errerlabs.</p>
+</footer>
+</div>
+</body>
+</html>

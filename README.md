@@ -1,8 +1,9 @@
-# Everything, Read Aloud
+# The Everything Library — hear-my-book.com
 
-The audio companion to the *Everything* series by Karl Meves — a small static
-web player that serves chapter-by-chapter audio (NotebookLM-generated episodes),
-plus any slides or infographics that come with them, for:
+The library and audio home of the *Everything* series by Karl Meves — a small
+static site that showcases every book (read links, EPUB downloads) and serves
+chapter-by-chapter audio (NotebookLM-generated episodes), plus any slides or
+infographics that come with them, for:
 
 - *Everything That Glows* — information is physical
 - *Everything That Grows* — the oldest language
@@ -80,7 +81,13 @@ Bump `CACHE` in `sw.js` when shipping player changes so installed copies
 refresh. Audio is intentionally never cached by the service worker —
 intercepting media range requests breaks seeking.
 
+## Publishing
+
+`PUBLISHING.md` documents the full Errerlabs pipeline — episode loop, adding a
+new book, EPUB releases, legal defaults, domain setup, and the launch
+checklist.
+
 ## Author / publisher
 
 By **Karl Meves**, published by **Errerlabs** (errerlabs@gmail.com).
-The books are free to read at their own sites; see each book repo's LICENSE.
+Site, books, audio: all rights reserved — see `LICENSE` and `legal.html`.
