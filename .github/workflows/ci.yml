@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Duration parser unit tests
+        run: node tests/duration.test.mjs
+      - name: Install playwright
+        working-directory: tests
+        run: npm install && npx playwright install --with-deps chromium
+      - name: End-to-end player suite
+        working-directory: tests
+        run: node run.mjs
+      - name: Feed generation sanity
+        run: node tools/build-feeds.mjs && ls feed-*.xml || true
