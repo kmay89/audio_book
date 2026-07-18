@@ -27,6 +27,8 @@ for (const book of catalog.books){
       jobs.push({name: item.audio.file, url: item.audio.sourceUrl, bytes: item.audio.bytes});
     for (const s of item.slides || [])
       if (s.sourceUrl) jobs.push({name: s.file, url: s.sourceUrl, bytes: null});
+    if (item.text && item.text.sourceUrl)
+      jobs.push({name: item.text.file, url: item.text.sourceUrl, bytes: null});
   }
 }
 

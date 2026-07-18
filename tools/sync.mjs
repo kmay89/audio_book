@@ -129,6 +129,15 @@ async function main(){
         log.push(`${book.slug}: − ${slug} audio removed (asset gone)`);
       }
 
+      const textFile = files.find(f => f.extra === 'text' && ['.md', '.txt'].includes(f.ext));
+      if (textFile){
+        const t = {file: textFile.name, url: 'media/' + textFile.name, sourceUrl: textFile.asset.browser_download_url};
+        if (JSON.stringify(item.text || null) !== JSON.stringify(t)){ item.text = t; log.push(`${book.slug}: ✓ ${slug} text companion`); }
+      } else if (item.text){
+        item.text = null;
+        log.push(`${book.slug}: − ${slug} text companion removed (asset gone)`);
+      }
+
       const outlineFile = files.find(f => f.extra === 'outline' && ['.txt', '.md'].includes(f.ext));
       if (outlineFile){
         const text = (await download(outlineFile.asset)).toString('utf8').trim();
@@ -156,7 +165,7 @@ async function main(){
     // unwire chapter audio whose assets vanished
     for (const c of book.chapters){
       if (c.audio && !bySlug.has(c.slug)){
-        c.audio = null; c.slides = [];
+        c.audio = null; c.slides = []; c.text = null;
         if (c.outlineFromAsset){ c.outline = null; delete c.outlineFromAsset; }
         log.push(`${book.slug}: − ${c.slug} unwired (no assets in release)`);
       }

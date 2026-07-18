@@ -64,6 +64,7 @@ Optional companions, same drag-and-drop, matched by filename:
 | file | shows up as |
 |---|---|
 | `glows__ch-remembers__outline.txt` (or `.md`) | the chapter's expandable outline |
+| `glows__ch-remembers__text.md` (or `.txt`) | a read-along Text tab in the Now Playing view |
 | `glows__ch-remembers__slides.pdf` | "Slides" button (opens the PDF) |
 | `glows__ch-remembers__slide-01.png`, `-02` … | "Slides" button (inline images) |
 
