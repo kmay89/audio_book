@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-07-18T18:50:21Z",
+  "updated": "2026-07-18T19:41:26Z",
   "publisher": "Errerlabs",
   "mediaRepo": "kmay89/audio_book",
   "books": [
@@ -276,6 +276,114 @@
               "url": "media/grows__ch-cathedral__slides.pdf",
               "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slides.pdf",
               "type": "pdf"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-01.jpg",
+              "url": "media/grows__ch-cathedral__slide-01.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-01.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-02.jpg",
+              "url": "media/grows__ch-cathedral__slide-02.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-02.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-03.jpg",
+              "url": "media/grows__ch-cathedral__slide-03.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-03.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-04.jpg",
+              "url": "media/grows__ch-cathedral__slide-04.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-04.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-05.jpg",
+              "url": "media/grows__ch-cathedral__slide-05.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-05.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-06.jpg",
+              "url": "media/grows__ch-cathedral__slide-06.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-06.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-07.jpg",
+              "url": "media/grows__ch-cathedral__slide-07.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-07.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-08.jpg",
+              "url": "media/grows__ch-cathedral__slide-08.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-08.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-09.jpg",
+              "url": "media/grows__ch-cathedral__slide-09.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-09.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-10.jpg",
+              "url": "media/grows__ch-cathedral__slide-10.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-10.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-11.jpg",
+              "url": "media/grows__ch-cathedral__slide-11.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-11.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-12.jpg",
+              "url": "media/grows__ch-cathedral__slide-12.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-12.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-13.jpg",
+              "url": "media/grows__ch-cathedral__slide-13.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-13.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-14.jpg",
+              "url": "media/grows__ch-cathedral__slide-14.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-14.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-15.jpg",
+              "url": "media/grows__ch-cathedral__slide-15.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-15.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-16.jpg",
+              "url": "media/grows__ch-cathedral__slide-16.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-16.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-17.jpg",
+              "url": "media/grows__ch-cathedral__slide-17.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-17.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-cathedral__slide-18.jpg",
+              "url": "media/grows__ch-cathedral__slide-18.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slide-18.jpg",
+              "type": "image"
             }
           ]
         },
@@ -299,6 +407,66 @@
               "url": "media/grows_ch-see__slides.pdf",
               "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows_ch-see__slides.pdf",
               "type": "pdf"
+            },
+            {
+              "file": "grows__ch-see__slide-01.jpg",
+              "url": "media/grows__ch-see__slide-01.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-see__slide-01.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-see__slide-02.jpg",
+              "url": "media/grows__ch-see__slide-02.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-see__slide-02.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-see__slide-03.jpg",
+              "url": "media/grows__ch-see__slide-03.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-see__slide-03.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-see__slide-04.jpg",
+              "url": "media/grows__ch-see__slide-04.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-see__slide-04.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-see__slide-05.jpg",
+              "url": "media/grows__ch-see__slide-05.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-see__slide-05.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-see__slide-06.jpg",
+              "url": "media/grows__ch-see__slide-06.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-see__slide-06.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-see__slide-07.jpg",
+              "url": "media/grows__ch-see__slide-07.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-see__slide-07.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-see__slide-08.jpg",
+              "url": "media/grows__ch-see__slide-08.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-see__slide-08.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-see__slide-09.jpg",
+              "url": "media/grows__ch-see__slide-09.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-see__slide-09.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-see__slide-10.jpg",
+              "url": "media/grows__ch-see__slide-10.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-see__slide-10.jpg",
+              "type": "image"
             }
           ]
         }
