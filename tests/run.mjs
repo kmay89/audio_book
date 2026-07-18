@@ -182,6 +182,23 @@ await page.waitForFunction(() => {
   return c && c.textContent === '2 of 2';
 }, null, {timeout: 5000});
 ok(true, 'next arrow advances the pager');
+// fullscreen lightbox: tap a slide → zoom/page/close, audio never stops
+await page.locator('#np-stage .sv-slide img').first().click();
+await page.waitForSelector('#lb.open');
+ok((await page.locator('#lb .lb-count').textContent()) === '1 of 2', 'lightbox opens on the tapped slide');
+await page.keyboard.press('ArrowRight');
+await page.waitForFunction(() => document.querySelector('#lb .lb-count').textContent === '2 of 2', null, {timeout: 5000});
+ok(true, 'arrow key pages the lightbox');
+await page.locator('#lb .lb-stage img').dblclick();
+ok(await page.evaluate(() => document.querySelector('#lb .lb-stage img').style.transform.includes('scale(2.5)')),
+  'double-tap zooms the slide');
+await page.locator('#lb .lb-stage img').dblclick();
+ok(await page.evaluate(() => document.querySelector('#lb .lb-stage img').style.transform.includes('scale(1)')),
+  'double-tap again resets zoom');
+await page.keyboard.press('Escape');
+ok(await page.evaluate(() => !document.querySelector('#lb').classList.contains('open')), 'Escape closes only the lightbox');
+ok(await page.evaluate(() => !document.querySelector('#player').paused), 'audio still playing after lightbox');
+ok(await page.locator('#np.open').count() === 1, 'drawer still open under the lightbox');
 await page.locator('#np-tabs [data-tab="text"]').click();
 await page.waitForFunction(() => document.querySelector('.np-doc') && document.querySelector('.np-doc').textContent.includes('remembers'), null, {timeout: 5000});
 ok(await page.locator('.np-doc h2').textContent() === 'The Candle', 'text companion renders markdown heading');

@@ -1,7 +1,7 @@
 // Shell-only service worker. Audio streams straight from GitHub Releases
 // (cross-origin) and is deliberately never intercepted or cached here —
 // intercepting media range requests breaks seeking on some browsers.
-const CACHE = 'ab-shell-v5';
+const CACHE = 'ab-shell-v6';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
   'privacy.html', 'legal.html', 'accessibility.html'];
 
