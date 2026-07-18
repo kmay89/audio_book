@@ -69,7 +69,12 @@ simply hasn't cut a tagged release yet.
 
 - Netlify serves this repo's root; `netlify.toml` carries the headers, CSP,
   service-worker rules, and the `www.hear-my-book.com → hear-my-book.com`
-  redirect. No build step.
+  redirect. The only build step is `tools/fetch-media.mjs`, which downloads
+  the catalog's media out of GitHub Releases so Netlify serves it with real
+  audio MIME types (GitHub's forced `octet-stream` downloads don't play on
+  iOS Safari). Media bandwidth rides Netlify's 100 GB/month free tier; the
+  scale-up path is an R2/S3 bucket with free egress, swapped in via the
+  catalog's `url` fields.
 - Custom domain: add `hear-my-book.com` under Site → Domain management and
   follow Netlify's DNS instructions (apex A/ALIAS + `www` CNAME); HTTPS is
   automatic.

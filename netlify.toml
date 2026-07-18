@@ -2,6 +2,10 @@
 
 [build]
   publish = "."
+  # pull the audio/slides referenced by catalog.json out of GitHub Releases so
+  # Netlify serves them itself — iOS Safari refuses GitHub's forced
+  # application/octet-stream downloads in an <audio> element
+  command = "node tools/fetch-media.mjs"
 
 # canonical host: apex; www redirects
 [[redirects]]
@@ -41,3 +45,8 @@
   for = "/*.png"
   [headers.values]
     Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/media/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"

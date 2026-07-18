@@ -1,7 +1,7 @@
 // Shell-only service worker. Audio streams straight from GitHub Releases
 // (cross-origin) and is deliberately never intercepted or cached here —
 // intercepting media range requests breaks seeking on some browsers.
-const CACHE = 'ab-shell-v2';
+const CACHE = 'ab-shell-v3';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
   'privacy.html', 'legal.html', 'accessibility.html'];
 
@@ -16,7 +16,10 @@ self.addEventListener('activate', e => {
 });
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
-  if (e.request.method !== 'GET' || url.origin !== location.origin) return; // audio/slides pass through untouched
+  if (e.request.method !== 'GET' || url.origin !== location.origin) return;
+  // media streams (and any ranged request) must reach the network untouched —
+  // intercepting them breaks seeking, especially on Safari
+  if (url.pathname.includes('/media/') || e.request.headers.has('range')) return;
   // network-first so updates land; cache fallback for offline shell
   e.respondWith(
     fetch(e.request).then(res => {
