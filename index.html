@@ -163,16 +163,18 @@ h1{font-size:1.6rem;margin:.4rem 0 .2rem}
 .pb-title{font-family:var(--serif);font-weight:700;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pb-book{font-size:.75rem;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pb-x{flex:0 0 auto;color:var(--faint);font-size:1.1rem;padding:.3rem .4rem}
+.pb-open{padding:0;border-radius:10px}
+.pb-open:hover .pb-title{color:var(--accent-bright)}
 .pb-scrub{display:flex;align-items:center;gap:.6rem;margin-top:.15rem}
 .pb-time{font-size:.72rem;color:var(--faint);font-variant-numeric:tabular-nums;flex:0 0 auto;min-width:2.9rem}
 .pb-time.right{text-align:right}
-#seek{flex:1;appearance:none;-webkit-appearance:none;height:1.2rem;background:transparent;margin:0;cursor:pointer}
-#seek::-webkit-slider-runnable-track{height:4px;border-radius:2px;
+.scrub-range{flex:1;appearance:none;-webkit-appearance:none;height:1.2rem;background:transparent;margin:0;cursor:pointer}
+.scrub-range::-webkit-slider-runnable-track{height:4px;border-radius:2px;
   background:linear-gradient(to right,var(--accent-bright) var(--fill,0%),var(--rule) var(--fill,0%))}
-#seek::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent-bright);margin-top:-5px}
-#seek::-moz-range-track{height:4px;border-radius:2px;background:var(--rule)}
-#seek::-moz-range-progress{height:4px;border-radius:2px;background:var(--accent-bright)}
-#seek::-moz-range-thumb{width:14px;height:14px;border:0;border-radius:50%;background:var(--accent-bright)}
+.scrub-range::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent-bright);margin-top:-5px}
+.scrub-range::-moz-range-track{height:4px;border-radius:2px;background:var(--rule)}
+.scrub-range::-moz-range-progress{height:4px;border-radius:2px;background:var(--accent-bright)}
+.scrub-range::-moz-range-thumb{width:14px;height:14px;border:0;border-radius:50%;background:var(--accent-bright)}
 .pb-controls{display:flex;align-items:center;justify-content:center;gap:.4rem;margin-top:.1rem}
 .pb-controls .ctl{width:2.7rem;height:2.7rem;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--ink)}
 .pb-controls .ctl:hover{background:var(--note-bg)}
@@ -184,6 +186,59 @@ h1{font-size:1.6rem;margin:.4rem 0 .2rem}
 #btn-play svg{width:1.6rem;height:1.6rem}
 .pb-side{font-size:.78rem;color:var(--muted);min-width:3.2rem;text-align:center;border:1px solid var(--rule);border-radius:999px;padding:.25rem .5rem}
 .pb-side.on{color:var(--accent-bright);border-color:var(--accent-bright)}
+
+/* ---- now playing drawer ---- */
+#np{position:fixed;inset:0;z-index:46;background:var(--paper);display:flex;flex-direction:column;
+  transform:translateY(103%);transition:transform .38s cubic-bezier(.32,.72,0,1);
+  padding:0 0 env(safe-area-inset-bottom);touch-action:none;will-change:transform;
+  border-radius:18px 18px 0 0;box-shadow:0 -12px 48px rgba(0,0,0,.25)}
+#np.open{transform:none}
+#np.dragging{transition:none}
+@media(prefers-reduced-motion:reduce){#np{transition:none}}
+.np-grab{flex:0 0 auto;padding:.55rem 0 .25rem;display:flex;justify-content:center;cursor:grab}
+.np-grab::before{content:"";width:2.6rem;height:5px;border-radius:3px;background:var(--rule)}
+.np-head{flex:0 0 auto;display:flex;align-items:center;gap:.8rem;padding:.2rem 1.1rem .5rem;max-width:var(--measure);margin:0 auto;width:100%}
+.np-head .t{flex:1;min-width:0}
+.np-head .t .title{font-family:var(--serif);font-weight:700;font-size:1.05rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np-head .t .book{font-size:.8rem;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np-close{color:var(--faint);font-size:1.3rem;padding:.3rem .5rem}
+.np-stage{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;
+  max-width:var(--measure);margin:0 auto;width:100%;padding:.4rem 1.1rem}
+.np-art{height:100%;min-height:16rem;display:flex;align-items:center;justify-content:center}
+.np-art .plate{width:min(78vw,21rem);aspect-ratio:1;border-radius:22px;position:relative;overflow:hidden;
+  background:linear-gradient(150deg,var(--a1,#34346b),var(--a2,#5757c8));
+  box-shadow:0 18px 48px rgba(0,0,0,.28);display:flex;flex-direction:column;justify-content:flex-end;padding:1.3rem}
+.np-art .plate::after{content:"";position:absolute;left:10%;right:10%;bottom:12%;height:3px;border-radius:2px;
+  background:linear-gradient(90deg,#e66,#ea3,#ec2,#5b5,#4ac,#66e,#a6e)}
+@media(prefers-reduced-motion:no-preference){
+  .np-art .plate::after{background-size:200% 100%;animation:np-shimmer 14s linear infinite}
+  @keyframes np-shimmer{from{background-position:0% 0}to{background-position:200% 0}}
+}
+.np-art .plate .bt{font-family:var(--serif);font-weight:700;font-size:1.25rem;color:#fff;line-height:1.25;margin-bottom:1.2rem;text-shadow:0 1px 8px rgba(0,0,0,.35)}
+.np-art .plate .bs{font-size:.8rem;color:rgba(255,255,255,.85);font-style:italic;margin-bottom:1.4rem}
+.np-slides img{max-width:100%;border:1px solid var(--rule);border-radius:10px;margin:0 0 .9rem;display:block}
+.np-doc{font-family:var(--serif);font-size:1.02rem;line-height:1.7;padding:.4rem 0 1.5rem;white-space:normal}
+.np-doc h2,.np-doc h3{font-family:var(--serif);margin:1.4rem 0 .5rem}
+.np-doc p{margin:0 0 .9rem}
+.np-doc.outline{white-space:pre-wrap;color:var(--muted);font-family:var(--sans);font-size:.92rem}
+.np-tabs{flex:0 0 auto;display:flex;gap:.45rem;justify-content:center;padding:.5rem 1rem .2rem;flex-wrap:wrap}
+.np-tabs button,.np-tabs a{border:1px solid var(--rule);border-radius:999px;padding:.25rem .85rem;font-size:.82rem;color:var(--muted)}
+.np-tabs button[aria-selected="true"]{border-color:var(--accent-bright);color:var(--accent-bright);font-weight:600}
+.np-tabs a{color:var(--accent-bright)}
+.np-bottom{flex:0 0 auto;max-width:var(--measure);margin:0 auto;width:100%;padding:.3rem 1.1rem 1rem}
+.np-scrub{display:flex;align-items:center;gap:.6rem}
+.np-controls{display:flex;align-items:center;justify-content:center;gap:.9rem;margin-top:.35rem}
+.np-controls .ctl{width:3.1rem;height:3.1rem;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--ink)}
+.np-controls .ctl svg{width:1.7rem;height:1.7rem;fill:currentColor}
+.np-controls .ctl .lbl{position:absolute;font-size:.55rem;margin-top:1.9rem;color:var(--faint)}
+#np-play{width:4.2rem;height:4.2rem;background:var(--accent);color:#fff;border-radius:50%}
+@media (prefers-color-scheme: dark){#np-play{color:#16161a}}
+#np-play svg{width:2rem;height:2rem}
+.np-extra{display:flex;justify-content:center;gap:.6rem;margin-top:.55rem}
+.np-extra button{border:1px solid var(--rule);border-radius:999px;padding:.25rem .8rem;font-size:.8rem;color:var(--muted)}
+.np-extra button.on{border-color:var(--accent-bright);color:var(--accent-bright)}
+#np-backdrop{position:fixed;inset:0;z-index:45;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .3s}
+#np-backdrop.open{opacity:1;pointer-events:auto}
 
 /* ---- menus / modals ---- */
 .menu{position:fixed;z-index:50;bottom:calc(8.6rem + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
@@ -302,16 +357,18 @@ footer .spectral{margin-bottom:.8rem}
 <div id="playerbar" aria-label="Player">
   <div class="pb-inner">
     <div class="pb-top">
-      <div class="pb-art art" id="pb-art"></div>
-      <div class="pb-meta">
-        <div class="pb-title" id="pb-title"></div>
-        <div class="pb-book" id="pb-book"></div>
-      </div>
+      <button class="pb-open" id="btn-np" aria-label="Open Now Playing" style="display:flex;align-items:center;gap:.7rem;flex:1;min-width:0;text-align:left">
+        <span class="pb-art art" id="pb-art"></span>
+        <span class="pb-meta" style="flex:1;min-width:0;display:block">
+          <span class="pb-title" id="pb-title" style="display:block"></span>
+          <span class="pb-book" id="pb-book" style="display:block"></span>
+        </span>
+      </button>
       <button class="pb-x" id="btn-close" aria-label="Close player">✕</button>
     </div>
     <div class="pb-scrub">
       <span class="pb-time" id="t-cur">0:00</span>
-      <input id="seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek">
+      <input id="seek" class="scrub-range" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek">
       <span class="pb-time right" id="t-rem">−0:00</span>
     </div>
     <div class="pb-controls">
@@ -322,6 +379,36 @@ footer .spectral{margin-bottom:.8rem}
       <button class="ctl" id="btn-fwd30" aria-label="Forward 30 seconds"><svg viewBox="0 0 24 24"><path d="M12 4V1l5 5-5 5V7a6 6 0 1 0 6 6h2a8 8 0 1 1-8-9z"/></svg><span class="lbl">30</span></button>
       <button class="ctl" id="btn-next" aria-label="Next chapter"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l10.5-7z"/></svg></button>
       <button class="pb-side" id="btn-sleep" aria-label="Sleep timer">☾</button>
+    </div>
+  </div>
+</div>
+
+<div id="np-backdrop"></div>
+<div id="np" role="dialog" aria-modal="true" aria-label="Now playing" hidden>
+  <div class="np-grab" id="np-grab" aria-hidden="true"></div>
+  <div class="np-head">
+    <div class="t"><div class="title" id="np-title"></div><div class="book" id="np-book"></div></div>
+    <button class="np-close" id="np-close" aria-label="Minimize player">⌄</button>
+  </div>
+  <div class="np-stage" id="np-stage"></div>
+  <div class="np-tabs" id="np-tabs" role="tablist" aria-label="Companion view"></div>
+  <div class="np-bottom">
+    <div class="np-scrub pb-scrub">
+      <span class="pb-time" id="np-tcur">0:00</span>
+      <input id="np-seek" class="scrub-range" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek">
+      <span class="pb-time right" id="np-trem">−0:00</span>
+    </div>
+    <div class="np-controls">
+      <button class="ctl" id="np-prev" aria-label="Previous chapter"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9.5 12z"/></svg></button>
+      <button class="ctl" id="np-back15" aria-label="Back 15 seconds"><svg viewBox="0 0 24 24"><path d="M12 4V1L7 6l5 5V7a6 6 0 1 1-6 6H4a8 8 0 1 0 8-9z"/></svg><span class="lbl">15</span></button>
+      <button class="ctl" id="np-play" aria-label="Play"><svg id="np-ic-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg id="np-ic-pause" viewBox="0 0 24 24" style="display:none"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
+      <button class="ctl" id="np-fwd30" aria-label="Forward 30 seconds"><svg viewBox="0 0 24 24"><path d="M12 4V1l5 5-5 5V7a6 6 0 1 0 6 6h2a8 8 0 1 1-8-9z"/></svg><span class="lbl">30</span></button>
+      <button class="ctl" id="np-next" aria-label="Next chapter"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l10.5-7z"/></svg></button>
+    </div>
+    <div class="np-extra">
+      <button id="np-rate" aria-label="Playback speed">1×</button>
+      <button id="np-sleep" aria-label="Sleep timer">☾ Sleep</button>
+      <button id="np-wake" aria-label="Keep screen awake" hidden>Keep screen on</button>
     </div>
   </div>
 </div>
@@ -640,6 +727,7 @@ function cueTrack(it, autoplay){
   document.title = it.title + ' — The Everything Library';
   if (curBookSlug === it.book.slug) history.replaceState(null, '', '#' + it.key);
   refreshRows();
+  if (typeof npIsOpen === 'function' && npIsOpen()) renderNP();
   if (autoplay) safePlay();
 }
 function playTrack(it){ cueTrack(it, true); }
@@ -788,6 +876,8 @@ $('#btn-prev').addEventListener('click', () => {
 });
 $('#btn-next').addEventListener('click', () => nextTrack(1));
 $('#btn-close').addEventListener('click', () => {
+  const npEl = document.querySelector('#np');
+  if (npEl && !npEl.hidden){ npEl.classList.remove('open'); npEl.hidden = true; document.querySelector('#np-backdrop').classList.remove('open'); }
   saveProgress(true);
   audio.pause(); audio.removeAttribute('src'); audio.load();
   cur = null;
@@ -828,6 +918,7 @@ function applyRate(r){
   audio.defaultPlaybackRate = r;
   LS.set('ab-rate', String(r));
   $('#btn-rate').textContent = r + '×';
+  const npr = document.querySelector('#np-rate'); if (npr) npr.textContent = r + '×';
   rateMenu.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.rate === r ? 'true' : 'false'));
 }
 rateMenu.addEventListener('click', e => {
@@ -885,6 +976,194 @@ function openSlides(it){
 $('#slides-close').addEventListener('click', () => $('#slides-overlay').classList.remove('open'));
 $('#slides-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.classList.remove('open'); });
 
+// ---------- now playing drawer ----------
+const np = $('#np'), npBackdrop = $('#np-backdrop'), npStage = $('#np-stage'), npTabs = $('#np-tabs');
+let npTab = 'art';
+const textCache = new Map();
+
+function npOpen(){
+  if (!cur) return;
+  np.hidden = false;
+  requestAnimationFrame(() => { np.classList.add('open'); npBackdrop.classList.add('open'); });
+  renderNP();
+}
+function npClose(){
+  np.classList.remove('open'); npBackdrop.classList.remove('open');
+  const done = () => { np.hidden = true; np.removeEventListener('transitionend', done); };
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) np.hidden = true;
+  else np.addEventListener('transitionend', done);
+}
+const npIsOpen = () => !np.hidden && np.classList.contains('open');
+
+function renderNP(){
+  if (!cur) return;
+  $('#np-title').textContent = cur.title;
+  $('#np-book').textContent = cur.book.title + ' · ' + cur.book.author;
+  // tabs for this track
+  const tabs = [['art', 'Art']];
+  if (cur.slides && cur.slides.length) tabs.push(['slides', 'Slides']);
+  if (cur.outline) tabs.push(['outline', 'Outline']);
+  if (cur.text) tabs.push(['text', 'Text']);
+  if (!tabs.some(t => t[0] === npTab)) npTab = 'art';
+  npTabs.innerHTML = tabs.map(([k, label]) =>
+    `<button role="tab" data-tab="${k}" aria-selected="${npTab === k}">${label}</button>`).join('')
+    + (cur.book.readUrl ? `<a href="${esc(safeUrl(cur.book.readUrl))}#${esc(cur.slug)}" target="_blank" rel="noopener">Read ↗</a>` : '');
+  renderNPStage();
+  syncNPControls();
+}
+function renderNPStage(){
+  npStage.scrollTop = 0;
+  if (npTab === 'art'){
+    npStage.innerHTML = `<div class="np-art"><div class="plate" style="${artStyle(cur.book)}">
+      <div class="bs">${esc(cur.book.tagline)}</div>
+      <div class="bt">${esc(cur.title)}</div></div></div>`;
+  } else if (npTab === 'slides'){
+    npStage.innerHTML = '<div class="np-slides"></div>';
+    const host = npStage.firstChild;
+    for (const s of cur.slides){
+      if (s.type === 'pdf'){
+        const p = document.createElement('p');
+        p.innerHTML = `<a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener">Open slides (PDF) ›</a>`;
+        host.appendChild(p);
+      } else {
+        const img = document.createElement('img');
+        img.loading = 'lazy'; img.src = safeUrl(s.url); img.alt = cur.title + ' slide';
+        host.appendChild(img);
+      }
+    }
+  } else if (npTab === 'outline'){
+    npStage.innerHTML = `<div class="np-doc outline">${esc(cur.outline)}</div>`;
+  } else if (npTab === 'text'){
+    npStage.innerHTML = '<div class="np-doc">Loading…</div>';
+    loadText(cur).then(html => { if (npTab === 'text') npStage.innerHTML = `<div class="np-doc">${html}</div>`; })
+      .catch(() => { if (npTab === 'text') npStage.innerHTML = '<div class="np-doc">Couldn\'t load the text. Check your connection.</div>'; });
+  }
+}
+npTabs.addEventListener('click', e => {
+  const b = e.target.closest('button[data-tab]'); if (!b) return;
+  npTab = b.dataset.tab;
+  npTabs.querySelectorAll('button').forEach(x => x.setAttribute('aria-selected', x === b ? 'true' : 'false'));
+  renderNPStage();
+});
+
+// minimal markdown for the __text companion: headings, paragraphs, em/strong
+async function loadText(track){
+  const key = track.key;
+  if (textCache.has(key)) return textCache.get(key);
+  const res = await fetch(safeUrl(track.text.url));
+  if (!res.ok) throw new Error('text ' + res.status);
+  const raw = await res.text();
+  const html = esc(raw)
+    .replace(/^### (.*)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.*)$/gm, '<h2>$1</h2>')
+    .replace(/^# (.*)$/gm, '<h2>$1</h2>')
+    .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*\n]+)\*/g, '<em>$1</em>')
+    .split(/\n{2,}/).map(b => /^<h[23]>/.test(b.trim()) ? b : `<p>${b.trim().replace(/\n/g, '<br>')}</p>`).join('\n');
+  textCache.set(key, html);
+  return html;
+}
+
+// open/close + Apple-style drag-to-dismiss
+$('#btn-np').addEventListener('click', npOpen);
+$('#np-close').addEventListener('click', npClose);
+npBackdrop.addEventListener('click', npClose);
+{
+  let startY = null, dy = 0;
+  const grabZone = e => e.target.closest('.np-grab, .np-head') && !e.target.closest('button');
+  np.addEventListener('pointerdown', e => {
+    if (!grabZone(e)) return;
+    startY = e.clientY; dy = 0;
+    np.classList.add('dragging');
+    np.setPointerCapture(e.pointerId);
+  });
+  np.addEventListener('pointermove', e => {
+    if (startY === null) return;
+    dy = Math.max(0, e.clientY - startY);
+    np.style.transform = `translateY(${dy}px)`;
+  });
+  const endDrag = () => {
+    if (startY === null) return;
+    np.classList.remove('dragging');
+    np.style.transform = '';
+    if (dy > 120) npClose();
+    startY = null;
+  };
+  np.addEventListener('pointerup', endDrag);
+  np.addEventListener('pointercancel', endDrag);
+}
+
+// mirrored transport controls
+$('#np-play').addEventListener('click', togglePlay);
+$('#np-back15').addEventListener('click', () => seekBy(-15));
+$('#np-fwd30').addEventListener('click', () => seekBy(30));
+$('#np-prev').addEventListener('click', () => { if (audio.currentTime > 5) audio.currentTime = 0; else nextTrack(-1); });
+$('#np-next').addEventListener('click', () => nextTrack(1));
+$('#np-rate').addEventListener('click', e => { e.stopPropagation(); toggleMenu(rateMenu); });
+$('#np-sleep').addEventListener('click', e => { e.stopPropagation(); toggleMenu(sleepMenu); });
+function syncNPControls(){
+  const playing = !audio.paused;
+  $('#np-ic-play').style.display = playing ? 'none' : '';
+  $('#np-ic-pause').style.display = playing ? '' : 'none';
+  $('#np-play').setAttribute('aria-label', playing ? 'Pause' : 'Play');
+  $('#np-rate').textContent = (parseFloat(LS.get('ab-rate', '1')) || 1) + '×';
+}
+const npSeek = $('#np-seek');
+function updateNPTime(){
+  if (!cur || np.hidden) return;
+  const d = knownDuration();
+  if (!scrubbing){
+    $('#np-tcur').textContent = fmt(audio.currentTime);
+    $('#np-trem').textContent = '−' + fmt(Math.max(0, d - audio.currentTime));
+    npSeek.value = d ? Math.round(1000 * audio.currentTime / d) : 0;
+    npSeek.style.setProperty('--fill', (100 * npSeek.value / 1000) + '%');
+  }
+}
+npSeek.addEventListener('input', () => {
+  scrubbing = true;
+  const d = knownDuration(), t = d * npSeek.value / 1000;
+  $('#np-tcur').textContent = fmt(t);
+  $('#np-trem').textContent = '−' + fmt(Math.max(0, d - t));
+  npSeek.style.setProperty('--fill', (100 * npSeek.value / 1000) + '%');
+});
+const npEndScrub = () => {
+  if (!scrubbing || !cur) { scrubbing = false; return; }
+  scrubbing = false;
+  const d = knownDuration(), t = d * npSeek.value / 1000;
+  if (audio.readyState === 0){ pendingSeek = t; audio.load(); safePlay(); }
+  else audio.currentTime = t;
+};
+npSeek.addEventListener('change', npEndScrub);
+npSeek.addEventListener('pointerup', npEndScrub);
+audio.addEventListener('timeupdate', updateNPTime);
+audio.addEventListener('play', syncNPControls);
+audio.addEventListener('pause', syncNPControls);
+
+// keep the screen awake during long sessions (Screen Wake Lock API)
+let wakeLock = null;
+const wakeBtn = $('#np-wake');
+if ('wakeLock' in navigator){
+  wakeBtn.hidden = false;
+  const wantWake = () => LS.get('ab-wake', '0') === '1';
+  async function acquireWake(){
+    try {
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => { wakeLock = null; });
+    } catch(e){}
+  }
+  function syncWake(){
+    wakeBtn.classList.toggle('on', wantWake());
+    wakeBtn.textContent = wantWake() ? 'Screen stays on' : 'Keep screen on';
+    if (wantWake() && !audio.paused) acquireWake();
+    else if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
+  }
+  wakeBtn.addEventListener('click', () => { LS.set('ab-wake', wantWake() ? '0' : '1'); syncWake(); });
+  audio.addEventListener('play', syncWake);
+  audio.addEventListener('pause', syncWake);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) syncWake(); });
+  syncWake();
+}
+
 // display settings (Aa): theme + text size, persisted, applied pre-paint by the head script
 const aaBtn = $('#btn-aa'), aaPanel = $('#aa-panel');
 function applyTheme(t){
@@ -926,7 +1205,11 @@ document.addEventListener('keydown', e => {
   if (e.key === ' '){ e.preventDefault(); togglePlay(); }
   else if (e.key === 'ArrowLeft') seekBy(-15);
   else if (e.key === 'ArrowRight') seekBy(30);
-  else if (e.key === 'Escape'){ closeMenus(); $('#slides-overlay').classList.remove('open'); aaPanel.hidden = true; aaBtn.setAttribute('aria-expanded', 'false'); }
+  else if (e.key === 'Escape'){
+    closeMenus(); $('#slides-overlay').classList.remove('open');
+    aaPanel.hidden = true; aaBtn.setAttribute('aria-expanded', 'false');
+    if (npIsOpen()) npClose();
+  }
 });
 
 // lifecycle: never lose the listener's place
