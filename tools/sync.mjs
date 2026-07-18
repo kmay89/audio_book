@@ -101,7 +101,8 @@ async function main(){
         log.push(`${book.slug}: + extra '${slug}'`);
       }
 
-      const audioFile = files.find(f => !f.extra && AUDIO_EXT.includes(f.ext));
+      // prefer .mp3 (the normalized form) when several encodings coexist
+      const audioFile = AUDIO_EXT.map(ext => files.find(f => !f.extra && f.ext === ext)).find(Boolean);
       if (audioFile){
         const {asset} = audioFile;
         const prev = item.audio;

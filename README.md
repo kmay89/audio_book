@@ -61,9 +61,12 @@ Optional companions, same drag-and-drop, matched by filename:
 | `glows__ch-remembers__slides.pdf` | "Slides" button (opens the PDF) |
 | `glows__ch-remembers__slide-01.png`, `-02` … | "Slides" button (inline images) |
 
-`.m4a` and `.wav` audio are accepted too, but `.mp3` is the safe default for
-every browser. Deleting an asset from the release and re-running the sync
-unwires it again — the releases are the source of truth.
+`.m4a`, `.wav`, and friends are accepted too — the sync workflow first
+**normalizes** any non-MP3 audio (CI transcodes it to a web-safe 128 kbps MP3
+with ffmpeg and uploads it back to the release; the original stays put and the
+catalog uses the MP3). So upload exactly what NotebookLM gives you. Deleting a
+chapter's assets from the release and re-running the sync unwires it again —
+the releases are the source of truth.
 
 Locally, the same sync runs with `node tools/sync.mjs` (add `--dry-run` to
 preview; set `GITHUB_TOKEN` if you hit API rate limits).
