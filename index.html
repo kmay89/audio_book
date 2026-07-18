@@ -85,9 +85,14 @@ header.top{position:sticky;top:0;z-index:30;background:var(--paper);border-botto
 .aa-row button:hover{border-color:var(--accent-bright)}
 .aa-row button[aria-pressed="true"]{border-color:var(--accent-bright);color:var(--accent-bright);font-weight:600}
 
-main{max-width:var(--measure);margin:0 auto;padding:1.2rem 1rem 2rem}
+main{max-width:72rem;margin:0 auto;padding:1.2rem 1rem 2rem}
+#view-home .lede,#view-home .eyebrow,#view-home h1{max-width:42rem}
+#continue-slot,#journey-slot{max-width:42rem}
+#view-book{max-width:46rem;margin:0 auto}
 .view{display:none}
-.view.active{display:block}
+.view.active{display:block;animation:view-in .28s ease both}
+@keyframes view-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.view.active{animation:none}}
 h1,h2,h3{font-family:var(--serif);line-height:1.25}
 h1{font-size:1.6rem;margin:.4rem 0 .2rem}
 .lede{color:var(--muted);margin:.2rem 0 1.4rem;font-size:.95rem;max-width:36rem}
@@ -107,8 +112,7 @@ h1{font-size:1.6rem;margin:.4rem 0 .2rem}
 .eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);margin:0 0 .1rem}
 .eyebrow em{font-style:normal}
 .shelf{display:grid;gap:1.3rem 1.1rem;grid-template-columns:repeat(2,1fr);perspective:1200px}
-@media(min-width:480px){.shelf{grid-template-columns:repeat(3,1fr)}}
-@media(min-width:720px){.shelf{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:480px){.shelf{grid-template-columns:repeat(auto-fill,minmax(9.5rem,1fr))}}
 .cover{text-align:left;padding:0;display:block;-webkit-tap-highlight-color:transparent}
 .cov{display:block;aspect-ratio:2/3;border-radius:8px;position:relative;overflow:hidden;
   background:linear-gradient(150deg,var(--a1,#34346b),var(--a2,#5757c8));
@@ -171,6 +175,14 @@ h1{font-size:1.6rem;margin:.4rem 0 .2rem}
 .row .stateicon{flex:0 0 2.1rem;height:2.1rem;display:flex;align-items:center;justify-content:center;
   border:1px solid var(--rule);border-radius:50%;color:var(--accent-bright);font-size:.8rem}
 .row.playing .stateicon,.rowmain:hover .stateicon{border-color:var(--accent-bright)}
+.row.playing{background:linear-gradient(90deg,var(--note-bg),transparent);border-radius:8px;margin:0 -.4rem;padding-left:.4rem;padding-right:.4rem}
+.eq{display:inline-flex;align-items:flex-end;gap:2px;height:.85rem}
+.eq i{width:3px;background:var(--accent-bright);border-radius:1px;animation:eq .9s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:.25s}.eq i:nth-child(3){animation-delay:.5s}
+@keyframes eq{0%,100%{height:30%}50%{height:100%}}
+@media(prefers-reduced-motion:reduce){.eq i{animation:none;height:60%}}
+.row.flash{animation:row-flash 1.6s ease}
+@keyframes row-flash{0%,45%{box-shadow:inset 0 0 0 2px var(--accent-bright)}100%{box-shadow:none}}
 .row .done-tick{color:var(--faint)}
 .rowactions{display:flex;gap:1rem;margin:.15rem 0 0 2.4rem;font-size:.8rem}
 .rowactions button{color:var(--accent-bright);padding:.1rem 0}
@@ -183,6 +195,10 @@ h1{font-size:1.6rem;margin:.4rem 0 .2rem}
 #playerbar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--paper);
   border-top:1px solid var(--rule);box-shadow:0 -6px 24px rgba(0,0,0,.07);transform:translateY(110%);transition:transform .25s ease;
   padding-bottom:env(safe-area-inset-bottom)}
+#pb-hairline{position:absolute;top:-1px;left:0;height:2px;width:0;background:var(--accent-bright);transition:width .5s linear}
+.ctl:active,#btn-play:active,#np-play:active{transform:scale(.94)}
+.ctl,#btn-play,#np-play{transition:transform .12s ease}
+@media(prefers-reduced-motion:reduce){.ctl,#btn-play,#np-play{transition:none}.ctl:active,#btn-play:active,#np-play:active{transform:none}}
 #playerbar.visible{transform:none}
 @media(prefers-reduced-motion:reduce){#playerbar{transition:none}}
 .pb-inner{max-width:var(--measure);margin:0 auto;padding:.55rem 1rem .7rem}
@@ -268,6 +284,26 @@ h1{font-size:1.6rem;margin:.4rem 0 .2rem}
 .np-extra button.on{border-color:var(--accent-bright);color:var(--accent-bright)}
 #np-backdrop{position:fixed;inset:0;z-index:45;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .3s}
 #np-backdrop.open{opacity:1;pointer-events:auto}
+.np-head .t{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.np-head .t .loc{font-size:.74rem;color:var(--accent-bright);margin-top:.1rem}
+.np-chapters{padding:.2rem 0 1rem}
+.np-chapters .nrow{display:flex;width:100%;text-align:left;align-items:center;gap:.7rem;padding:.55rem .2rem;border-bottom:1px solid var(--rule)}
+.np-chapters .nrow .n{flex:0 0 1.6rem;text-align:right;color:var(--faint);font-size:.82rem;font-variant-numeric:tabular-nums}
+.np-chapters .nrow .t2{flex:1;min-width:0;font-family:var(--serif);font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np-chapters .nrow .d{font-size:.75rem;color:var(--faint);font-variant-numeric:tabular-nums}
+.np-chapters .nrow:hover .t2{color:var(--accent-bright)}
+.np-chapters .nrow.now .t2{color:var(--accent-bright);font-weight:600}
+/* wide layout (iPad landscape / desktop): controls left, companion stage right */
+@media(min-width:900px){
+  #np{display:grid;grid-template-columns:minmax(21rem,26rem) 1fr;grid-template-rows:auto auto auto 1fr;
+    column-gap:1rem;padding-left:1.4rem;padding-right:1.4rem}
+  .np-grab{grid-column:1/3}
+  .np-head{grid-column:1;grid-row:2;margin:0;width:auto}
+  .np-tabs{grid-column:1;grid-row:3;justify-content:flex-start;padding-left:1.1rem}
+  .np-bottom{grid-column:1;grid-row:4;align-self:end;margin:0;width:auto}
+  .np-stage{grid-column:2;grid-row:2/5;margin:0;width:auto;border-left:1px solid var(--rule);padding-left:1.6rem}
+  .np-art .plate{width:min(34vw,26rem)}
+}
 
 /* ---- menus / modals ---- */
 .menu{position:fixed;z-index:50;bottom:calc(8.6rem + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
@@ -387,6 +423,7 @@ footer .spectral{margin-bottom:.8rem}
 </script>
 
 <div id="playerbar" aria-label="Player">
+  <div id="pb-hairline" aria-hidden="true"></div>
   <div class="pb-inner">
     <div class="pb-top">
       <button class="pb-open" id="btn-np" aria-label="Open Now Playing" style="display:flex;align-items:center;gap:.7rem;flex:1;min-width:0;text-align:left">
@@ -419,7 +456,10 @@ footer .spectral{margin-bottom:.8rem}
 <div id="np" role="dialog" aria-modal="true" aria-label="Now playing" hidden>
   <div class="np-grab" id="np-grab" aria-hidden="true"></div>
   <div class="np-head">
-    <div class="t"><div class="title" id="np-title"></div><div class="book" id="np-book"></div></div>
+    <div class="t" id="np-loc" role="button" tabindex="0" aria-label="Show this chapter in its book">
+      <div class="title" id="np-title"></div><div class="book" id="np-book"></div>
+      <div class="loc">Show in book ›</div>
+    </div>
     <button class="np-close" id="np-close" aria-label="Minimize player">⌄</button>
   </div>
   <div class="np-stage" id="np-stage"></div>
@@ -440,7 +480,14 @@ footer .spectral{margin-bottom:.8rem}
     <div class="np-extra">
       <button id="np-rate" aria-label="Playback speed">1×</button>
       <button id="np-sleep" aria-label="Sleep timer">☾ Sleep</button>
+      <button id="np-flag" aria-label="Flag this moment">⚑ Flag</button>
+      <button id="np-share" aria-label="Share this moment">Share</button>
+      <button id="np-airplay" aria-label="AirPlay" hidden>AirPlay</button>
       <button id="np-wake" aria-label="Keep screen awake" hidden>Keep screen on</button>
+    </div>
+    <div class="np-extra" id="np-volrow" hidden>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="color:var(--faint);align-self:center"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
+      <input id="np-vol" class="scrub-range" type="range" min="0" max="100" value="100" aria-label="Volume" style="max-width:11rem">
     </div>
   </div>
 </div>
@@ -640,7 +687,9 @@ function rowHTML(it){
   } else {
     sub = it.book.readUrl ? `<span>text only for now</span>` : `<span>coming soon</span>`;
   }
-  const icon = it.audio ? (done ? '✓' : '▶') : '·';
+  const nowPlaying = cur === it && !audio.paused;
+  const icon = nowPlaying ? '<span class="eq" aria-label="Playing"><i></i><i></i><i></i></span>'
+    : it.audio ? (done ? '✓' : '▶') : '·';
   return `<div class="rowmain-wrap">
     <button class="rowmain" data-act="play" ${it.audio ? '' : 'disabled'} aria-label="${it.audio ? 'Play' : ''} ${esc(it.title)}">
       <span class="n">${it.kind === 'chapter' ? it.n : '·'}</span>
@@ -722,25 +771,36 @@ function openBook(slug, chapterSlug){
   renderBook(b);
   show('book');
   const h = '#' + slug + (chapterSlug ? '/' + chapterSlug : '');
-  if (location.hash !== h) history.replaceState(null, '', h);
+  if (location.hash !== h){
+    // real entries so the back button/gesture works — but staying inside the
+    // same book only replaces, so back always steps out to the shelf
+    if (location.hash.startsWith('#' + slug)) history.replaceState(null, '', h);
+    else history.pushState(null, '', h);
+  }
 }
 function openHome(){
   curBookSlug = null;
   renderHome();
   show('home');
-  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  if (location.hash) history.pushState(null, '', location.pathname + location.search);
 }
 function route(){
   if (!CAT) return;
   const h = location.hash.replace(/^#/, '');
   if (!h) return openHome();
-  const [bs, cs] = h.split('/');
+  const m = h.match(/^([^/@]+)(?:\/([^@]+))?(?:@(\d+))?$/);
+  if (!m) return openHome();
+  const [, bs, cs, at] = m;
   const b = findBook(bs);
   if (!b) return openHome();
   openBook(bs, cs);
   if (cs){
     const it = findItem(b, cs);
-    if (it && it.audio) cueTrack(it);
+    if (it && it.audio){
+      const t = at != null ? Math.min(+at, (it.audio.duration || Infinity) - 1) : null;
+      cueTrack(it, false, t);
+      if (t != null && t > 0) toast(`Cued to ${fmt(t)} — press play`, 4000);
+    }
   }
 }
 
@@ -749,12 +809,18 @@ function knownDuration(){
   if (isFinite(audio.duration) && audio.duration > 0) return audio.duration;
   return (cur && cur.audio.duration) || 0;
 }
-function cueTrack(it, autoplay){
-  if (cur === it && audio.src) { if (autoplay) safePlay(); return; }
+function cueTrack(it, autoplay, atTime){
+  if (cur === it && audio.src){
+    if (atTime != null){
+      if (audio.readyState === 0) pendingSeek = atTime; else audio.currentTime = atTime;
+    }
+    if (autoplay) safePlay();
+    return;
+  }
   saveProgress(true);
   cur = it;
-  pendingSeek = +LS.get(posKey(it), 0) || null;
-  if (pendingSeek && it.audio.duration && pendingSeek > it.audio.duration - 8) pendingSeek = null;
+  pendingSeek = atTime != null ? atTime : (+LS.get(posKey(it), 0) || null);
+  if (atTime == null && pendingSeek && it.audio.duration && pendingSeek > it.audio.duration - 8) pendingSeek = null;
   audio.src = it.audio.url;
   $('#pb-title').textContent = it.title;
   $('#pb-book').textContent = it.book.title + ' · ' + it.book.author;
@@ -837,9 +903,11 @@ audio.addEventListener('timeupdate', () => {
   }
   saveProgress(false);
   checkSleep();
+  const hd = knownDuration();
+  $('#pb-hairline').style.width = hd ? (100 * audio.currentTime / hd) + '%' : '0';
 });
-audio.addEventListener('play', () => { setPlayIcon(true); refreshRowsThrottled(); });
-audio.addEventListener('pause', () => { setPlayIcon(false); saveProgress(true); });
+audio.addEventListener('play', () => { setPlayIcon(true); refreshRows(); });
+audio.addEventListener('pause', () => { setPlayIcon(false); saveProgress(true); refreshRows(); });
 audio.addEventListener('seeked', () => { saveProgress(true); updatePositionState(); });
 audio.addEventListener('ratechange', updatePositionState);
 audio.addEventListener('ended', () => {
@@ -1031,9 +1099,14 @@ function npOpen(){
 }
 function npClose(){
   np.classList.remove('open'); npBackdrop.classList.remove('open');
-  const done = () => { np.hidden = true; np.removeEventListener('transitionend', done); };
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) np.hidden = true;
-  else np.addEventListener('transitionend', done);
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches){ np.hidden = true; return; }
+  const done = () => {
+    if (!np.classList.contains('open')) np.hidden = true; // unless reopened meanwhile
+    np.removeEventListener('transitionend', done);
+    clearTimeout(tid);
+  };
+  const tid = setTimeout(done, 450); // transition is 380ms; fallback if the event is missed
+  np.addEventListener('transitionend', done);
 }
 const npIsOpen = () => !np.hidden && np.classList.contains('open');
 
@@ -1043,9 +1116,12 @@ function renderNP(){
   $('#np-book').textContent = cur.book.title + ' · ' + cur.book.author;
   // tabs for this track
   const tabs = [['art', 'Art']];
+  const bookQueue = [...(cur.book.extras || []), ...cur.book.chapters].filter(x => x.audio);
+  if (bookQueue.length > 1) tabs.push(['chapters', 'Up Next']);
   if (cur.slides && cur.slides.length) tabs.push(['slides', 'Slides']);
   if (cur.outline) tabs.push(['outline', 'Outline']);
   if (cur.text) tabs.push(['text', 'Text']);
+  if (getFlags().some(f => f.k.startsWith(cur.book.slug + '/'))) tabs.push(['flags', 'Flags']);
   if (!tabs.some(t => t[0] === npTab)) npTab = 'art';
   npTabs.innerHTML = tabs.map(([k, label]) =>
     `<button role="tab" data-tab="${k}" aria-selected="${npTab === k}">${label}</button>`).join('')
@@ -1061,6 +1137,44 @@ function renderNPStage(){
     npStage.innerHTML = `<div class="np-art"><div class="plate" style="${artStyle(cur.book)}">${coverImg}
       <div class="bs" style="position:relative">${esc(cur.book.tagline)}</div>
       <div class="bt" style="position:relative">${esc(cur.title)}</div></div></div>`;
+  } else if (npTab === 'chapters'){
+    const host = document.createElement('div');
+    host.className = 'np-chapters';
+    for (const it of [...(cur.book.extras || []), ...cur.book.chapters].filter(x => x.audio)){
+      const row = document.createElement('button');
+      row.className = 'nrow' + (it === cur ? ' now' : '');
+      row.innerHTML = `<span class="n">${it.kind === 'chapter' ? it.n : '·'}</span>
+        <span class="t2">${esc(it.title)}</span>
+        <span class="d">${it === cur ? 'now playing' : (LS.get(doneKey(it)) ? '✓' : fmt(it.audio.duration))}</span>`;
+      row.addEventListener('click', () => { if (it !== cur) playTrack(it); });
+      host.appendChild(row);
+    }
+    npStage.innerHTML = ''; npStage.appendChild(host);
+  } else if (npTab === 'flags'){
+    const host = document.createElement('div');
+    host.className = 'np-chapters';
+    const flags = getFlags().filter(f => f.k.startsWith(cur.book.slug + '/')).sort((a, b) => a.k.localeCompare(b.k) || a.t - b.t);
+    for (const f of flags){
+      const [bs, slug] = f.k.split('/');
+      const it = findItem(cur.book, slug);
+      if (!it || !it.audio) continue;
+      const row = document.createElement('div');
+      row.className = 'nrow';
+      row.innerHTML = `<span class="n">⚑</span>
+        <button class="t2" style="text-align:left" aria-label="Play from ${fmt(f.t)}">${esc(it.title)} · ${fmt(f.t)}</button>
+        <button class="d" data-do="share" aria-label="Share this moment">share</button>
+        <button class="d" data-do="del" aria-label="Remove flag">✕</button>`;
+      row.querySelector('.t2').addEventListener('click', () => cueTrack(it, true, f.t));
+      row.querySelector('[data-do="share"]').addEventListener('click', () => shareMoment(f.k, it.title, cur.book.title, f.t + 3));
+      row.querySelector('[data-do="del"]').addEventListener('click', () => {
+        saveFlags(getFlags().filter(x => !(x.k === f.k && x.t === f.t)));
+        renderNP();
+        toast('Flag removed');
+      });
+      host.appendChild(row);
+    }
+    if (!flags.length) host.innerHTML = '<p class="np-doc outline">No flags in this book yet — tap ⚑ while listening to mark a moment.</p>';
+    npStage.innerHTML = ''; npStage.appendChild(host);
   } else if (npTab === 'slides'){
     npStage.innerHTML = '<div class="np-slides"></div>';
     const host = npStage.firstChild;
@@ -1113,28 +1227,106 @@ $('#btn-np').addEventListener('click', npOpen);
 $('#np-close').addEventListener('click', npClose);
 npBackdrop.addEventListener('click', npClose);
 {
-  let startY = null, dy = 0;
+  let startY = null, dy = 0, captured = false;
   const grabZone = e => e.target.closest('.np-grab, .np-head') && !e.target.closest('button');
   np.addEventListener('pointerdown', e => {
     if (!grabZone(e)) return;
-    startY = e.clientY; dy = 0;
-    np.classList.add('dragging');
-    np.setPointerCapture(e.pointerId);
+    startY = e.clientY; dy = 0; captured = false;
   });
   np.addEventListener('pointermove', e => {
     if (startY === null) return;
     dy = Math.max(0, e.clientY - startY);
-    np.style.transform = `translateY(${dy}px)`;
+    if (!captured && dy > 8){
+      // only claim the pointer once it's clearly a drag — taps stay clicks
+      captured = true;
+      np.classList.add('dragging');
+      try { np.setPointerCapture(e.pointerId); } catch(err){}
+    }
+    if (captured) np.style.transform = `translateY(${dy}px)`;
   });
   const endDrag = () => {
     if (startY === null) return;
-    np.classList.remove('dragging');
-    np.style.transform = '';
-    if (dy > 120) npClose();
-    startY = null;
+    if (captured){
+      np.classList.remove('dragging');
+      np.style.transform = '';
+      if (dy > 120) npClose();
+    }
+    startY = null; captured = false;
   };
   np.addEventListener('pointerup', endDrag);
   np.addEventListener('pointercancel', endDrag);
+}
+
+// "Show in book" — jump from the player back to the chapter's place in the library
+function showInBook(){
+  if (!cur) return;
+  const key = cur.key;
+  npClose();
+  openBook(cur.book.slug);
+  requestAnimationFrame(() => {
+    const row = document.querySelector(`.row[data-key="${key}"]`);
+    if (!row) return;
+    row.scrollIntoView({block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+    row.classList.add('flash');
+    setTimeout(() => row.classList.remove('flash'), 1700);
+  });
+}
+$('#np-loc').addEventListener('click', showInBook);
+$('#np-loc').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); showInBook(); } });
+
+// share this exact moment: the link opens cued to the second (with a little
+// pre-roll for context), and the share text says chapter + timestamp
+async function shareMoment(key, title, bookTitle, rawT){
+  const t = Math.max(0, Math.floor(rawT) - 3);
+  const atStart = t < 8;
+  const url = location.origin + location.pathname + '#' + key + (atStart ? '' : '@' + t);
+  const payload = atStart
+    ? {title: `${title} — ${bookTitle}`, text: `Listen to “${title}” from ${bookTitle}, read aloud:`, url}
+    : {title: `${title} at ${fmt(t)} — ${bookTitle}`, text: `Drop in at ${fmt(t)} of “${title}” (${bookTitle}) — this bit:`, url};
+  if (navigator.share){ try { await navigator.share(payload); } catch(e){} return; }
+  try { await navigator.clipboard.writeText(url); toast(atStart ? 'Link copied' : `Link to ${fmt(t)} copied`); }
+  catch(e){ toast(url, 6000); }
+}
+$('#np-share').addEventListener('click', () => { if (cur) shareMoment(cur.key, cur.title, cur.book.title, audio.currentTime); });
+
+// flags: mark the moments you love while listening; jump back or share them
+const getFlags = () => { try { return JSON.parse(LS.get('ab-flags', '[]')) || []; } catch(e){ return []; } };
+const saveFlags = f => LS.set('ab-flags', JSON.stringify(f));
+function flagMoment(){
+  if (!cur || !audio.src) return;
+  const t = Math.floor(audio.currentTime);
+  const flags = getFlags();
+  if (flags.some(f => f.k === cur.key && Math.abs(f.t - t) < 5)){ toast('Already flagged right here'); return; }
+  flags.push({k: cur.key, t, c: Date.now()});
+  saveFlags(flags);
+  toast(`⚑ Flagged at ${fmt(t)}`);
+  if (npIsOpen()) renderNP();
+}
+$('#np-flag').addEventListener('click', flagMoment);
+
+// AirPlay (Safari exposes a native picker)
+if (window.WebKitPlaybackTargetAvailabilityEvent){
+  const ap = $('#np-airplay');
+  audio.addEventListener('webkitplaybacktargetavailabilitychanged', e => { ap.hidden = e.availability !== 'available'; });
+  ap.addEventListener('click', () => { try { audio.webkitShowPlaybackTargetPicker(); } catch(e){} });
+}
+
+// volume, where the platform allows it (iOS ties volume to the hardware buttons)
+{
+  const row = $('#np-volrow'), vol = $('#np-vol');
+  audio.volume = 0.5;
+  if (Math.abs(audio.volume - 0.5) < 0.01){
+    const saved = parseFloat(LS.get('ab-vol', '1'));
+    audio.volume = isFinite(saved) ? Math.min(1, Math.max(0, saved)) : 1;
+    vol.value = Math.round(audio.volume * 100);
+    vol.style.setProperty('--fill', vol.value + '%');
+    row.hidden = false;
+    vol.addEventListener('input', () => {
+      audio.volume = vol.value / 100;
+      vol.style.setProperty('--fill', vol.value + '%');
+      LS.set('ab-vol', String(audio.volume));
+    });
+  } else { audio.volume = 1; }
 }
 
 // mirrored transport controls
@@ -1271,6 +1463,7 @@ document.addEventListener('keydown', e => {
   if (e.key === ' '){ e.preventDefault(); togglePlay(); }
   else if (e.key === 'ArrowLeft') seekBy(-15);
   else if (e.key === 'ArrowRight') seekBy(30);
+  else if (e.key === 'f' || e.key === 'F') flagMoment();
   else if (e.key === 'Escape'){
     closeMenus(); $('#slides-overlay').classList.remove('open'); $('#page-overlay').classList.remove('open');
     aaPanel.hidden = true; aaBtn.setAttribute('aria-expanded', 'false');
@@ -1282,6 +1475,7 @@ document.addEventListener('keydown', e => {
 document.addEventListener('visibilitychange', () => { if (document.hidden) saveProgress(true); });
 window.addEventListener('pagehide', () => saveProgress(true));
 window.addEventListener('hashchange', route);
+window.addEventListener('popstate', () => { if (!location.hash) route(); }); // back to a hash-less entry
 
 // ---------- boot ----------
 applyRate(parseFloat(LS.get('ab-rate', '1')) || 1);
