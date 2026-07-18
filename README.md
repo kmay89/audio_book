@@ -78,6 +78,23 @@ the releases are the source of truth.
 Locally, the same sync runs with `node tools/sync.mjs` (add `--dry-run` to
 preview; set `GITHUB_TOKEN` if you hit API rate limits).
 
+## In the car (CarPlay / Android Auto)
+
+Playback uses a real media stream with full Media Session metadata, so when
+a phone is connected to a car the audio routes as proper media: it ducks for
+navigation prompts, pauses for calls, shows the **book cover, chapter title,
+and progress** on the car's Now Playing screen, and steering-wheel /
+lock-screen controls work. Start playback on the phone; the car takes it
+from there.
+
+Web apps cannot appear as apps *on* the car screen (Apple and Google only
+allow approved native apps). For car-screen browsing, every book with audio
+publishes a standard **podcast feed** (`/feed-<book>.xml`, generated at
+deploy by `tools/build-feeds.mjs`) — add it to Apple Podcasts, Overcast, or
+any podcast app and the chapters get a native CarPlay / Android Auto
+interface for free. The feeds can also be submitted to podcast directories
+whenever that's wanted.
+
 ## Player URLs
 
 - `/` — library

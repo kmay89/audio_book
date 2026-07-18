@@ -415,6 +415,7 @@ footer .spectral{margin-bottom:.8rem}
     <div class="bk-actions">
       <a id="bk-read" target="_blank" rel="noopener">Read online ↗</a>
       <a id="bk-epub" target="_blank" rel="noopener">EPUB ↓</a>
+      <a id="bk-feed" target="_blank" rel="noopener" title="Add this feed to a podcast app to browse and play chapters on CarPlay or Android Auto">Podcast feed ↗</a>
     </div>
     <div id="bk-extras"></div>
     <div class="section-label" id="bk-ch-label">Chapters</div>
@@ -752,6 +753,9 @@ function renderBook(b){
   $('#bk-read').hidden = !b.readUrl;
   $('#bk-epub').href = safeUrl(b.epubUrl);
   $('#bk-epub').hidden = !b.epubUrl;
+  const hasAnyAudio = b.chapters.some(c => c.audio) || (b.extras || []).some(x => x.audio);
+  $('#bk-feed').href = `feed-${b.slug}.xml`;
+  $('#bk-feed').hidden = !hasAnyAudio;
   $('#bk-desc').textContent = b.description || '';
   const withAudio = b.chapters.filter(c => c.audio);
   const total = withAudio.reduce((a,c) => a + c.audio.duration, 0);
@@ -994,14 +998,18 @@ function setPlayIcon(playing){
 // ---------- media session (lock screen / bluetooth) ----------
 function setMediaSession(it){
   if (!('mediaSession' in navigator)) return;
+  // real cover first: CarPlay, Android Auto, and lock screens show the book
+  const artwork = [];
+  if (it.book.coverUrl) artwork.push({src: safeUrl(it.book.coverUrl), sizes: '440x660', type: 'image/jpeg'});
+  artwork.push(
+    {src: new URL('icon-512.png', location.href).href, sizes: '512x512', type: 'image/png'},
+    {src: new URL('icon-192.png', location.href).href, sizes: '192x192', type: 'image/png'},
+  );
   navigator.mediaSession.metadata = new MediaMetadata({
     title: it.title,
     artist: it.book.author,
     album: it.book.title,
-    artwork: [
-      {src: 'icon-192.png', sizes: '192x192', type: 'image/png'},
-      {src: 'icon-512.png', sizes: '512x512', type: 'image/png'},
-    ],
+    artwork,
   });
 }
 function updatePositionState(){
