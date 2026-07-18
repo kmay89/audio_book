@@ -543,6 +543,18 @@
           "slides": []
         }
       ]
+    },
+    {
+      "slug": "goes",
+      "title": "Everything That Goes",
+      "tagline": "Book five — in the works",
+      "author": "Karl Meves",
+      "accent": "#1f5f5b",
+      "accentBright": "#2f8f88",
+      "readUrl": null,
+      "releaseTag": "media-goes",
+      "extras": [],
+      "chapters": []
     }
   ]
 }

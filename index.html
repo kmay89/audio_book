@@ -200,7 +200,7 @@ footer .spectral{margin-bottom:.8rem}
       </div>
     </div>
     <div id="bk-extras"></div>
-    <div class="section-label">Chapters</div>
+    <div class="section-label" id="bk-ch-label">Chapters</div>
     <ol class="rowlist" id="bk-chapters"></ol>
     <div class="empty-note" id="bk-empty" hidden>No audio published for this book yet — the chapters above link to the full text, and episodes will appear here as they're released.</div>
   </section>
@@ -365,7 +365,7 @@ function renderHome(){
     el.innerHTML = `<div class="art" style="${artStyle(b)}"></div>
       <div class="meta"><div class="t">${esc(b.title)}</div>
       <div class="tag">${esc(b.tagline)}</div>
-      <div class="stat">${withAudio ? `${withAudio} episode${withAudio === 1 ? '' : 's'}${total ? ' · ' + fmtLong(total) : ''}` : 'audio coming — read now'}</div>
+      <div class="stat">${withAudio ? `${withAudio} episode${withAudio === 1 ? '' : 's'}${total ? ' · ' + fmtLong(total) : ''}` : (b.readUrl ? 'audio coming — read now' : 'coming soon')}</div>
       ${pr && pr.done ? `<div class="bar"><i style="width:${Math.round(100*pr.done/pr.total)}%"></i></div>` : ''}</div>`;
     el.addEventListener('click', () => openBook(b.slug));
     list.appendChild(el);
@@ -385,7 +385,7 @@ function rowHTML(it){
     if (done) sub += `<span class="done-tick">✓ finished</span>`;
     if (it.slides && it.slides.length) sub += `<span>· has slides</span>`;
   } else {
-    sub = `<span>text only for now</span>`;
+    sub = it.book.readUrl ? `<span>text only for now</span>` : `<span>coming soon</span>`;
   }
   const icon = it.audio ? (done ? '✓' : '▶') : '·';
   return `<div class="rowmain-wrap">
@@ -397,7 +397,7 @@ function rowHTML(it){
     <div class="rowactions">
       ${it.outline ? `<button data-act="outline">Outline</button>` : ''}
       ${it.slides && it.slides.length ? `<button data-act="slides">Slides</button>` : ''}
-      <a href="${esc(readHref)}" target="_blank" rel="noopener">Read</a>
+      ${it.book.readUrl ? `<a href="${esc(readHref)}" target="_blank" rel="noopener">Read</a>` : ''}
     </div>
     ${it.outline ? `<div class="outline">${esc(it.outline)}</div>` : ''}
   </div>`;
@@ -409,12 +409,16 @@ function renderBook(b){
   $('#bk-title').textContent = b.title;
   $('#bk-tag').textContent = b.tagline;
   $('#bk-read').href = safeUrl(b.readUrl);
+  $('#bk-read').hidden = !b.readUrl;
   const withAudio = b.chapters.filter(c => c.audio);
   const total = withAudio.reduce((a,c) => a + c.audio.duration, 0);
   const pr = bookProgress(b);
   $('#bk-stat').textContent = withAudio.length
     ? `${withAudio.length} of ${b.chapters.length} chapters in audio · ${fmtLong(total)}${pr && pr.done ? ` · ${pr.done} finished` : ''}`
-    : `${b.chapters.length} chapters · audio coming`;
+    : (b.chapters.length ? `${b.chapters.length} chapters · audio coming` : 'in the works');
+  $('#bk-empty').textContent = b.readUrl
+    ? "No audio published for this book yet — the chapters above link to the full text, and episodes will appear here as they're released."
+    : "This book is still being written. Audio previews and chapters will appear here as they're released.";
   $('#bk-empty').hidden = withAudio.length > 0 || (b.extras || []).some(x => x.audio);
 
   const ex = $('#bk-extras'); ex.innerHTML = '';
@@ -425,6 +429,7 @@ function renderBook(b){
     for (const x of extras) ol.appendChild(makeRow(x));
     ex.appendChild(ol);
   }
+  $('#bk-ch-label').hidden = !b.chapters.length;
   const list = $('#bk-chapters'); list.innerHTML = '';
   for (const c of b.chapters) list.appendChild(makeRow(c));
 }

@@ -8,6 +8,10 @@ plus any slides or infographics that come with them, for:
 - *Everything That Grows* — the oldest language
 - *Everything That Knows* — the last question
 - *Everything That Shows* — the weight of looking
+- *Everything That Goes* — book five, in the works (audio previews can be
+  published before the text: upload to `media-goes` and they appear as
+  extras; when the book is published, fill in its `chapters` and `readUrl`
+  in `catalog.json`)
 
 The player remembers each listener's position per chapter (on-device,
 `localStorage`, nothing tracked), shows chapter length and outline, supports
