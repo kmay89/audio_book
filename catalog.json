@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-07-18T06:55:57Z",
+  "updated": "2026-07-18T18:50:21Z",
   "publisher": "Errerlabs",
   "mediaRepo": "kmay89/audio_book",
   "books": [
@@ -260,9 +260,24 @@
           "n": 17,
           "slug": "ch-cathedral",
           "title": "The Unfinished Cathedral",
-          "audio": null,
+          "audio": {
+            "file": "grows__ch-cathedral.mp3",
+            "url": "media/grows__ch-cathedral.mp3",
+            "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral.mp3",
+            "bytes": 47086164,
+            "duration": 2943,
+            "assetId": 481711756,
+            "updated": "2026-07-18T18:50:15Z"
+          },
           "outline": null,
-          "slides": []
+          "slides": [
+            {
+              "file": "grows__ch-cathedral__slides.pdf",
+              "url": "media/grows__ch-cathedral__slides.pdf",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-cathedral__slides.pdf",
+              "type": "pdf"
+            }
+          ]
         },
         {
           "n": 18,
@@ -271,14 +286,21 @@
           "audio": {
             "file": "grows__ch-see.mp3",
             "url": "media/grows__ch-see.mp3",
+            "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-see.mp3",
             "bytes": 38020630,
             "duration": 2376,
-            "assetId": 481246070,
-            "updated": "2026-07-18T06:55:54Z",
-            "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-see.mp3"
+            "assetId": 481711396,
+            "updated": "2026-07-18T18:49:37Z"
           },
           "outline": null,
-          "slides": []
+          "slides": [
+            {
+              "file": "grows_ch-see__slides.pdf",
+              "url": "media/grows_ch-see__slides.pdf",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows_ch-see__slides.pdf",
+              "type": "pdf"
+            }
+          ]
         }
       ],
       "order": 2,
