@@ -53,6 +53,9 @@ change checklist in `GETTING-STARTED.md`.
 
 ## Shipped (newest first)
 
+- Share-link importer: paste a song/share URL into the "Import from share
+  link" workflow → dry-run quality report, then audio + artwork uploaded,
+  transcoded, and synced in one go
 - Workflow docs (GETTING-STARTED), committed test suite, CI on every push/PR
 - One-tap subscribe links into native podcast apps (Apple Podcasts/Overcast/
   Pocket Casts) + per-book podcast RSS feeds; real cover art in Media Session

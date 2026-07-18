@@ -1,0 +1,58 @@
+name: Import from share link
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Share page URL (e.g. https://…/song/abc123)"
+        required: true
+      book:
+        description: "Book slug from catalog.json (e.g. glows)"
+        required: true
+      slug:
+        description: "Chapter slug (ch-…) or a new extra slug (e.g. song-first-light)"
+        required: true
+      publish:
+        description: "Actually upload + sync (leave unchecked for a dry-run report)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Inspect / import from the share page
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node tools/import-share.mjs \
+            --url "${{ inputs.url }}" \
+            --book "${{ inputs.book }}" \
+            --slug "${{ inputs.slug }}" \
+            ${{ inputs.publish && ' ' || '--dry-run' }}
+      - name: Install ffmpeg
+        if: ${{ inputs.publish }}
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Normalize + sync catalog
+        if: ${{ inputs.publish }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node tools/normalize.mjs
+          node tools/sync.mjs
+      - name: Commit catalog if changed
+        if: ${{ inputs.publish }}
+        run: |
+          if git diff --quiet catalog.json; then echo "No catalog changes."; exit 0; fi
+          git config user.name "catalog-sync"
+          git config user.email "actions@github.com"
+          git add catalog.json
+          git commit -m "Import from share link: ${{ inputs.book }}/${{ inputs.slug }}"
+          git push
