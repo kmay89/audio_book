@@ -183,8 +183,10 @@ The `media/…` path exists precisely for that (see watch-outs).
 - All state is `localStorage` under `ab-*` keys. The backup file
   (`Aa → Back up`) is the migration path — never build anything that would
   require clearing site data without pointing users there first.
-- Positions are per chapter; `ended` clears a chapter's position and marks it
-  done. Restore merges positions by furthest-point. Keep those semantics.
+- Positions are per chapter; `ended` clears a chapter's position, marks it
+  done, and counts a lap (`ab-laps:` — total completed listens; relistening
+  starts fresh without touching flags or the done mark). Restore merges
+  positions by furthest-point and lap counts by highest. Keep those semantics.
 
 **Feeds & car**
 - Feeds regenerate on every deploy from the catalog — never edit `feed-*.xml`.

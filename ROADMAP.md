@@ -53,6 +53,10 @@ change checklist in `GETTING-STARTED.md`.
 
 ## Shipped (newest first)
 
+- Listening laps: finishing a chapter counts a play-through (`ab-laps`);
+  relistening starts fresh while the ✓ stays, rows show "✓ ×N", the data
+  panel totals listens, and restore merges lap counts by max — no streaks,
+  just a quiet count
 - Fullscreen slide lightbox: tap a slide (or the expand chip) for an
   iOS-Photos-style view — pinch to zoom about the pinch point, one-finger
   pan while zoomed, swipe to page at 1x, pull down or Esc to close,
