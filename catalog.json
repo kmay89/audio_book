@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-07-18T00:00:00Z",
+  "updated": "2026-07-18T06:55:57Z",
   "publisher": "Errerlabs",
   "mediaRepo": "kmay89/audio_book",
   "books": [
@@ -267,7 +267,14 @@
           "n": 18,
           "slug": "ch-see",
           "title": "How to See It",
-          "audio": null,
+          "audio": {
+            "file": "grows__ch-see.mp3",
+            "url": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-see.mp3",
+            "bytes": 38020630,
+            "duration": 2376,
+            "assetId": 481246070,
+            "updated": "2026-07-18T06:55:54Z"
+          },
           "outline": null,
           "slides": []
         }
