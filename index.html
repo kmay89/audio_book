@@ -283,6 +283,14 @@ const fmtLong = s => {
   return h ? `${h} hr ${m} min` : `${m} min`;
 };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const safeUrl = u => {
+  if (!u) return '#';
+  try {
+    const parsed = new URL(u, location.href);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') return parsed.href;
+  } catch(e){}
+  return '#';
+};
 
 function toast(msg, ms = 3200){
   const el = $('#toast');
@@ -310,9 +318,9 @@ function register(book, item, kind){
   item.key = book.slug + '/' + item.slug;
   if (item.audio) { item.idx = TRACKS.length; TRACKS.push(item); }
 }
-const findBook = slug => CAT.books.find(b => b.slug === slug);
-const findItem = (book, slug) =>
-  (book.chapters.find(c => c.slug === slug)) || ((book.extras || []).find(x => x.slug === slug));
+const findBook = slug => CAT && CAT.books && CAT.books.find(b => b.slug === slug);
+const findItem = (book, slug) => book &&
+  ((book.chapters.find(c => c.slug === slug)) || ((book.extras || []).find(x => x.slug === slug)));
 
 // ---------- rendering ----------
 function artStyle(b){ return `--a1:${b.accent};--a2:${b.accentBright}`; }
@@ -369,7 +377,7 @@ function rowHTML(it){
   const pos = +LS.get(posKey(it), 0);
   const dur = it.audio ? it.audio.duration : 0;
   const partway = it.audio && pos > 20 && !done && dur;
-  const readHref = it.book.readUrl + '#' + it.slug;
+  const readHref = it.book.readUrl ? safeUrl(it.book.readUrl) + '#' + it.slug : '#';
   let sub = '';
   if (it.audio){
     sub = `<span class="dur">${fmt(dur)}</span>`;
@@ -400,7 +408,7 @@ function renderBook(b){
   $('#bk-art').style = artStyle(b);
   $('#bk-title').textContent = b.title;
   $('#bk-tag').textContent = b.tagline;
-  $('#bk-read').href = b.readUrl;
+  $('#bk-read').href = safeUrl(b.readUrl);
   const withAudio = b.chapters.filter(c => c.audio);
   const total = withAudio.reduce((a,c) => a + c.audio.duration, 0);
   const pr = bookProgress(b);
@@ -460,6 +468,7 @@ function openHome(){
   if (location.hash) history.replaceState(null, '', location.pathname + location.search);
 }
 function route(){
+  if (!CAT) return;
   const h = location.hash.replace(/^#/, '');
   if (!h) return openHome();
   const [bs, cs] = h.split('/');
@@ -513,6 +522,16 @@ function togglePlay(){
 function seekBy(s){
   if (!cur) return;
   const d = knownDuration();
+  if (audio.readyState === 0){
+    // metadata not loaded yet (e.g. cued deep link) — move the pending position instead
+    const from = pendingSeek != null ? pendingSeek : (+LS.get(posKey(cur), 0) || 0);
+    pendingSeek = Math.min(Math.max(0, from + s), d ? d - .3 : from + s);
+    $('#t-cur').textContent = fmt(pendingSeek);
+    $('#t-rem').textContent = '−' + fmt(Math.max(0, d - pendingSeek));
+    $('#seek').value = d ? Math.round(1000 * pendingSeek / d) : 0;
+    updateSeekFill();
+    return;
+  }
   audio.currentTime = Math.min(Math.max(0, audio.currentTime + s), d ? d - .3 : audio.currentTime + s);
 }
 function nextTrack(dir){
@@ -604,12 +623,13 @@ function setMediaSession(it){
 }
 function updatePositionState(){
   if (!('mediaSession' in navigator) || !navigator.mediaSession.setPositionState) return;
-  if (!isFinite(audio.duration) || !audio.duration) return;
+  const d = knownDuration();
+  if (!d) return;
   try {
     navigator.mediaSession.setPositionState({
-      duration: audio.duration,
+      duration: d,
       playbackRate: audio.playbackRate,
-      position: Math.min(audio.currentTime, audio.duration),
+      position: Math.min(audio.currentTime, d),
     });
   } catch(e){}
 }
@@ -718,11 +738,11 @@ function openSlides(it){
   for (const s of it.slides){
     if (s.type === 'pdf'){
       const p = document.createElement('p'); p.className = 'pdfline';
-      p.innerHTML = `<a href="${esc(s.url)}" target="_blank" rel="noopener">Open slides (PDF) ›</a>`;
+      p.innerHTML = `<a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener">Open slides (PDF) ›</a>`;
       body.appendChild(p);
     } else {
       const img = document.createElement('img');
-      img.loading = 'lazy'; img.src = s.url; img.alt = it.title + ' slide';
+      img.loading = 'lazy'; img.src = safeUrl(s.url); img.alt = it.title + ' slide';
       body.appendChild(img);
     }
   }

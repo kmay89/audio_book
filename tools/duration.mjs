@@ -17,7 +17,7 @@ function wavDuration(buf){
   while (off + 8 <= buf.length){
     const id = buf.toString('ascii', off, off + 4);
     const size = buf.readUInt32LE(off + 4);
-    if (id === 'fmt ') byteRate = buf.readUInt32LE(off + 16);
+    if (id === 'fmt ' && off + 20 <= buf.length) byteRate = buf.readUInt32LE(off + 16);
     if (id === 'data') dataLen = size;
     off += 8 + size + (size % 2);
   }
@@ -33,8 +33,12 @@ function mp4Duration(buf){
       let size = buf.readUInt32BE(off);
       const t = buf.toString('ascii', off + 4, off + 8);
       let head = 8;
-      if (size === 1){ size = Number(buf.readBigUInt64BE(off + 8)); head = 16; }
+      if (size === 1){
+        if (off + 16 > end) break;
+        size = Number(buf.readBigUInt64BE(off + 8)); head = 16;
+      }
       else if (size === 0) size = end - off;
+      if (size < head) break; // corrupt box would loop or walk backwards
       if (t === type) return [off + head, off + size];
       off += size;
     }

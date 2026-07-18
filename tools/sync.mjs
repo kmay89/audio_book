@@ -121,6 +121,12 @@ async function main(){
       if (outlineFile){
         const text = (await download(outlineFile.asset.browser_download_url)).toString('utf8').trim();
         if (item.outline !== text){ item.outline = text; log.push(`${book.slug}: ✓ ${slug} outline`); }
+        item.outlineFromAsset = true;
+      } else if (item.outlineFromAsset){
+        // only clear outlines this sync wrote — hand-edited catalog outlines stay
+        item.outline = null;
+        delete item.outlineFromAsset;
+        log.push(`${book.slug}: − ${slug} outline removed (asset gone)`);
       }
 
       const slides = [];
@@ -139,6 +145,7 @@ async function main(){
     for (const c of book.chapters){
       if (c.audio && !bySlug.has(c.slug)){
         c.audio = null; c.slides = [];
+        if (c.outlineFromAsset){ c.outline = null; delete c.outlineFromAsset; }
         log.push(`${book.slug}: − ${c.slug} unwired (no assets in release)`);
       }
     }
