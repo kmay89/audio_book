@@ -42,6 +42,9 @@ The player streams them directly; nothing is re-hosted.
    `glows__ch-remembers.mp3`. Chapter slugs are the `ch-…` ids from each book
    (they're all listed in `catalog.json`). A slug that isn't a chapter becomes
    an "extra" — e.g. `glows__overview.mp3` for a whole-book Audio Overview.
+   (A single underscore, `glows_ch-remembers.mp3`, is tolerated for plain
+   audio files — but the double underscore is the canonical form and required
+   for `__outline` / `__slides` companions.)
 3. **Upload** it to the book's media release on github.com → Releases →
    `media-<book>` → *Edit* → drag the file into the assets box. (First time:
    create a release with that tag — `media-glows` etc.)

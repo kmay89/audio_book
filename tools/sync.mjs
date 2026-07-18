@@ -40,20 +40,29 @@ async function api(url){
   if (!res.ok) throw new Error(`${url} -> ${res.status} ${await res.text()}`);
   return res.json();
 }
-async function download(url){
+async function download(asset){
+  // the API asset URL + octet-stream works for public and private repos alike
+  const url = asset.url || asset;
   const res = await fetch(url, {headers: {...headers, Accept: 'application/octet-stream'}, redirect: 'follow'});
   if (!res.ok) throw new Error(`${url} -> ${res.status}`);
   return Buffer.from(await res.arrayBuffer());
 }
 
 function parseName(name){
-  // <book>__<slug>[__<extra>].<ext>
+  // canonical: <book>__<slug>[__<extra>].<ext>
   const ext = path.extname(name).toLowerCase();
   const stem = name.slice(0, name.length - ext.length);
   const parts = stem.split('__');
-  if (parts.length < 2) return null;
-  const [book, slug, ...rest] = parts;
-  return {book, slug, extra: rest.join('__') || null, ext, name};
+  if (parts.length >= 2){
+    const [book, slug, ...rest] = parts;
+    return {book, slug, extra: rest.join('__') || null, ext, name};
+  }
+  // forgiving fallback: a single underscore after the book slug
+  // (e.g. grows_ch-see.m4a) — book slugs never contain underscores
+  const us = stem.indexOf('_');
+  if (us > 0 && us < stem.length - 1)
+    return {book: stem.slice(0, us), slug: stem.slice(us + 1), extra: null, ext, name};
+  return null;
 }
 
 const titleFromSlug = slug =>
@@ -100,7 +109,7 @@ async function main(){
           prev.url = asset.browser_download_url; // keep duration; refresh URL in case of retag
         } else {
           process.stdout.write(`${book.slug}/${slug}: reading duration of ${asset.name} (${(asset.size/1048576).toFixed(1)} MB)…\n`);
-          const buf = await download(asset.browser_download_url);
+          const buf = await download(asset);
           const duration = Math.round(audioDuration(buf, asset.name));
           item.audio = {
             file: asset.name,
@@ -119,7 +128,7 @@ async function main(){
 
       const outlineFile = files.find(f => f.extra === 'outline' && ['.txt', '.md'].includes(f.ext));
       if (outlineFile){
-        const text = (await download(outlineFile.asset.browser_download_url)).toString('utf8').trim();
+        const text = (await download(outlineFile.asset)).toString('utf8').trim();
         if (item.outline !== text){ item.outline = text; log.push(`${book.slug}: ✓ ${slug} outline`); }
         item.outlineFromAsset = true;
       } else if (item.outlineFromAsset){
