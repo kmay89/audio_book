@@ -31,9 +31,15 @@ tools/sync.mjs    wires GitHub Release assets into catalog.json
 
 **The media lives in GitHub Releases on this repo** — one rolling release per
 book, tagged `media-glows`, `media-grows`, `media-knows`, `media-shows`.
-Release assets are free to host, up to 2 GB per file, and (verified) served
-with HTTP range support, so scrubbing and resume work in every browser.
-The player streams them directly; nothing is re-hosted.
+Release assets are free storage, up to 2 GB per file. At deploy time, Netlify's
+build step (`tools/fetch-media.mjs`) pulls every file referenced by
+`catalog.json` into `media/` and serves it same-origin with a real audio MIME
+type and byte-range support — required because GitHub forces release downloads
+to `application/octet-stream`, which iOS Safari refuses to play in an `<audio>`
+element. Listening bandwidth therefore flows through Netlify (free tier:
+100 GB/month ≈ ~2,600 full 40-minute chapter plays); if traffic ever outgrows
+that, point the sync's `url` field at an R2/S3 bucket with free egress — the
+player only follows the catalog.
 
 ## Publishing a new episode (the pipeline)
 

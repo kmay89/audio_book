@@ -269,11 +269,12 @@
           "title": "How to See It",
           "audio": {
             "file": "grows__ch-see.mp3",
-            "url": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-see.mp3",
+            "url": "media/grows__ch-see.mp3",
             "bytes": 38020630,
             "duration": 2376,
             "assetId": 481246070,
-            "updated": "2026-07-18T06:55:54Z"
+            "updated": "2026-07-18T06:55:54Z",
+            "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-see.mp3"
           },
           "outline": null,
           "slides": []

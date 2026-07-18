@@ -107,14 +107,16 @@ async function main(){
         const {asset} = audioFile;
         const prev = item.audio;
         if (prev && prev.assetId === asset.id && prev.bytes === asset.size){
-          prev.url = asset.browser_download_url; // keep duration; refresh URL in case of retag
+          prev.url = 'media/' + asset.name;      // keep duration; refresh URLs in case of retag
+          prev.sourceUrl = asset.browser_download_url;
         } else {
           process.stdout.write(`${book.slug}/${slug}: reading duration of ${asset.name} (${(asset.size/1048576).toFixed(1)} MB)…\n`);
           const buf = await download(asset);
           const duration = Math.round(audioDuration(buf, asset.name));
           item.audio = {
             file: asset.name,
-            url: asset.browser_download_url,
+            url: 'media/' + asset.name,          // served same-origin by Netlify (fetch-media.mjs)
+            sourceUrl: asset.browser_download_url, // storage of record: the GitHub release
             bytes: asset.size,
             duration,
             assetId: asset.id,
@@ -141,10 +143,10 @@ async function main(){
 
       const slides = [];
       const pdf = files.find(f => f.extra === 'slides' && f.ext === '.pdf');
-      if (pdf) slides.push({file: pdf.name, url: pdf.asset.browser_download_url, type: 'pdf'});
+      if (pdf) slides.push({file: pdf.name, url: 'media/' + pdf.name, sourceUrl: pdf.asset.browser_download_url, type: 'pdf'});
       const imgs = files.filter(f => f.extra && f.extra.startsWith('slide-') && IMG_EXT.includes(f.ext))
         .sort((a, b) => a.name.localeCompare(b.name, undefined, {numeric: true}));
-      for (const im of imgs) slides.push({file: im.name, url: im.asset.browser_download_url, type: 'image'});
+      for (const im of imgs) slides.push({file: im.name, url: 'media/' + im.name, sourceUrl: im.asset.browser_download_url, type: 'image'});
       if (JSON.stringify(slides) !== JSON.stringify(item.slides || [])){
         item.slides = slides;
         log.push(`${book.slug}: ✓ ${slug} slides (${slides.length})`);
