@@ -18,6 +18,8 @@ import os from 'node:os';
 import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
+// shared with sync.mjs: canonical double underscore, single tolerated
+import {parseName} from './sync.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DRY = process.argv.includes('--dry-run');
@@ -36,17 +38,6 @@ async function api(url, init = {}){
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`${url} -> ${res.status} ${await res.text()}`);
   return res.status === 204 ? null : res.json();
-}
-
-// same parsing as sync.mjs: canonical double underscore, single tolerated
-function parseName(name){
-  const ext = path.extname(name).toLowerCase();
-  const stem = name.slice(0, name.length - ext.length);
-  const parts = stem.split('__');
-  if (parts.length >= 2) return {book: parts[0], slug: parts[1], extra: parts.slice(2).join('__') || null, ext};
-  const us = stem.indexOf('_');
-  if (us > 0 && us < stem.length - 1) return {book: stem.slice(0, us), slug: stem.slice(us + 1), extra: null, ext};
-  return null;
 }
 
 const catalog = JSON.parse(fs.readFileSync(path.join(ROOT, 'catalog.json'), 'utf8'));

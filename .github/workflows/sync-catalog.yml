@@ -18,7 +18,11 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      # always run on main: release events would otherwise check out the
+      # media-* tag's old commit (stale code, detached HEAD, unpushable)
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-node@v4
         with:
           node-version: 22
