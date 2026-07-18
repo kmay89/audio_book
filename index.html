@@ -415,7 +415,7 @@ footer .spectral{margin-bottom:.8rem}
     <div class="bk-actions">
       <a id="bk-read" target="_blank" rel="noopener">Read online ↗</a>
       <a id="bk-epub" target="_blank" rel="noopener">EPUB ↓</a>
-      <a id="bk-feed" target="_blank" rel="noopener" title="Add this feed to a podcast app to browse and play chapters on CarPlay or Android Auto">Podcast feed ↗</a>
+      <button id="bk-feed" title="Listen in a podcast app — includes CarPlay and Android Auto">Podcast app ▾</button>
     </div>
     <div id="bk-extras"></div>
     <div class="section-label" id="bk-ch-label">Chapters</div>
@@ -529,6 +529,7 @@ footer .spectral{margin-bottom:.8rem}
   </div>
 </div>
 
+<div class="menu" id="menu-feed" role="menu" aria-label="Listen in a podcast app"></div>
 <div class="menu" id="menu-rate" role="menu" aria-label="Playback speed"></div>
 <div class="menu" id="menu-sleep" role="menu" aria-label="Sleep timer"></div>
 
@@ -754,8 +755,8 @@ function renderBook(b){
   $('#bk-epub').href = safeUrl(b.epubUrl);
   $('#bk-epub').hidden = !b.epubUrl;
   const hasAnyAudio = b.chapters.some(c => c.audio) || (b.extras || []).some(x => x.audio);
-  $('#bk-feed').href = `feed-${b.slug}.xml`;
   $('#bk-feed').hidden = !hasAnyAudio;
+  $('#bk-feed').dataset.slug = b.slug;
   $('#bk-desc').textContent = b.description || '';
   const withAudio = b.chapters.filter(c => c.audio);
   const total = withAudio.reduce((a,c) => a + c.audio.duration, 0);
@@ -1594,6 +1595,34 @@ aaPanel.addEventListener('click', e => {
   if (b.dataset.sizeSet) applySize(b.dataset.sizeSet);
 });
 syncAa();
+
+// listen in a native podcast app — one-tap subscribe links per platform
+const feedMenu = $('#menu-feed');
+$('#bk-feed').addEventListener('click', e => {
+  e.stopPropagation();
+  const slug = e.currentTarget.dataset.slug;
+  const feedUrl = location.origin + location.pathname.replace(/[^/]*$/, '') + `feed-${slug}.xml`;
+  const bare = feedUrl.replace(/^https?:\/\//, '');
+  const os = document.documentElement.getAttribute('data-os');
+  const items = [];
+  if (os === 'apple') items.push(['Apple Podcasts', 'podcast://' + bare], ['Overcast', 'overcast://x-callback-url/add?url=' + encodeURIComponent(feedUrl)]);
+  items.push(['Pocket Casts', 'pktc://subscribe/' + bare]);
+  feedMenu.innerHTML = items.map(([label, href]) =>
+    `<button role="menuitem" data-open="${esc(href)}">${esc(label)}</button>`).join('')
+    + `<button role="menuitem" data-copy="${esc(feedUrl)}">Copy feed URL</button>
+       <button role="menuitem" data-open="${esc(feedUrl)}">View the feed</button>`;
+  toggleMenu(feedMenu);
+});
+feedMenu.addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  closeMenus();
+  if (b.dataset.copy){
+    try { await navigator.clipboard.writeText(b.dataset.copy); toast('Feed URL copied — paste it into any podcast app'); }
+    catch(err){ toast(b.dataset.copy, 6000); }
+  } else if (b.dataset.open){
+    location.href = b.dataset.open; // app schemes must navigate, not window.open
+  }
+});
 
 // footer pages open in-app so audio never stops (fallback: real navigation)
 document.querySelectorAll('a[data-page]').forEach(a => {
