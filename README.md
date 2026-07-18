@@ -1,8 +1,9 @@
 # The Everything Library — hear-my-book.com
 
 > **New here? Read `GETTING-STARTED.md`** — the step-by-step publishing guide
-> with the watch-outs. `PUBLISHING.md` is the pipeline reference. `tests/`
-> holds the suite CI runs on every push.
+> with the watch-outs. `PUBLISHING.md` is the pipeline reference, `ROADMAP.md`
+> the living improvement backlog, `CLAUDE.md` the working conventions and
+> invariants, and `tests/` the suite CI runs on every push.
 
 The library and audio home of the *Everything* series by Karl Meves — a small
 static site that showcases every book (read links, EPUB downloads) and serves
