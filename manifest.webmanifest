@@ -1,15 +1,40 @@
 {
   "name": "The Everything Library",
   "short_name": "Everything",
-  "description": "The Everything series by Karl Meves — read free, listen chapter by chapter, download the ebooks.",
+  "description": "The Everything series by Karl Meves \u2014 read free, listen chapter by chapter, download the ebooks.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#16161a",
   "theme_color": "#16161a",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "id": "./",
+  "categories": [
+    "books",
+    "education",
+    "entertainment"
+  ],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "display_override": [
+    "standalone"
   ]
 }
