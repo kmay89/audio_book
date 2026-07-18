@@ -53,6 +53,9 @@ change checklist in `GETTING-STARTED.md`.
 
 ## Shipped (newest first)
 
+- Embedded slides viewer: PDF decks are auto-rasterized to per-page images
+  in CI and shown as a swipeable pager (counter, arrows, deck download) in
+  the drawer's Slides tab and the Slides overlay
 - Share-link importer: paste a song/share URL into the "Import from share
   link" workflow → dry-run quality report, then audio + artwork uploaded,
   transcoded, and synced in one go

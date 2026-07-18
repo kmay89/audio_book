@@ -79,8 +79,8 @@ is the truck. `--clobber` overwrites same-name assets.)
 |---|---|
 | `grows__ch-see__outline.txt` / `.md` | expandable outline + drawer Outline tab |
 | `grows__ch-see__text.md` / `.txt` | read-along Text tab (light markdown: `##`, `**bold**`, `*italic*`) |
-| `grows__ch-see__slides.pdf` | Slides button/tab (opens the PDF) |
-| `grows__ch-see__slide-01.png` `-02` … | Slides as inline images, in number order |
+| `grows__ch-see__slides.pdf` | swipeable slide pages in the player (CI converts each PDF page to an image automatically) + a "Download the deck" link |
+| `grows__ch-see__slide-01.png` `-02` … | swipeable slide pages, in number order (hand-uploaded images win — a PDF is only auto-converted when a chapter has no slide images yet) |
 
 **Replace** an episode: delete the old asset from the release, upload the new
 file (same name), run the sync. **Unpublish**: delete the chapter's assets and

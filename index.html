@@ -276,7 +276,33 @@ h1{font-size:1.6rem;margin:.4rem 0 .2rem}
 .np-caption{text-align:center;max-width:22rem}
 .np-caption .c1{font-family:var(--serif);font-weight:700;font-size:1.05rem}
 .np-caption .c2{font-size:.8rem;color:var(--faint);font-style:italic;margin-top:.15rem}
-.np-slides img{max-width:100%;border:1px solid var(--rule);border-radius:10px;margin:0 0 .9rem;display:block}
+/* slide viewer — swipeable pager shared by the Slides overlay and drawer tab */
+.sv{position:relative;padding:.2rem 0 .4rem}
+.sv-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  touch-action:pan-x pan-y;scrollbar-width:none;border-radius:12px}
+.sv-track::-webkit-scrollbar{display:none}
+.sv-slide{flex:0 0 100%;margin:0;scroll-snap-align:center;scroll-snap-stop:always}
+.sv-slide img{width:100%;display:block;border:1px solid var(--rule);border-radius:12px;background:#fff}
+.sv-nav{position:absolute;top:50%;transform:translateY(-50%);width:2.4rem;height:2.4rem;border-radius:50%;
+  background:var(--paper);border:1px solid var(--rule);color:var(--muted);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.16)}
+.sv-nav svg{width:1.05rem;height:1.05rem;fill:currentColor}
+.sv-nav:hover{color:var(--accent-bright);border-color:var(--accent-bright)}
+.sv-nav[disabled]{opacity:.3;pointer-events:none}
+.sv-prev{left:.55rem}.sv-next{right:.55rem}
+@media(pointer:coarse){.sv-nav{display:none}}
+.sv-count{text-align:center;font-size:.78rem;color:var(--faint);margin-top:.55rem;font-variant-numeric:tabular-nums}
+.sv-deck{text-align:center;font-size:.84rem;margin:.5rem 0 0}
+.sv-deck a{color:var(--accent-bright)}
+.sv-pdf{width:100%;height:min(68vh,34rem);border:1px solid var(--rule);border-radius:12px;background:#fff}
+.sv-card{border:1px solid var(--rule);border-radius:14px;background:var(--note-bg);
+  padding:1.7rem 1.2rem;display:flex;flex-direction:column;align-items:center;gap:.4rem;text-align:center}
+.sv-card svg{width:2rem;height:2rem;fill:var(--accent-bright);margin-bottom:.2rem}
+.sv-card .tt{font-family:var(--serif);font-weight:700}
+.sv-card .ts{font-size:.82rem;color:var(--faint);max-width:20rem}
+.sv-card a{display:inline-block;margin-top:.7rem;border:1px solid var(--accent-bright);color:var(--accent-bright);
+  border-radius:999px;padding:.45rem 1.3rem;font-size:.9rem;font-weight:600}
+.np-stage.has-sv{touch-action:auto}
 .np-doc{font-family:var(--serif);font-size:1.02rem;line-height:1.7;padding:.4rem 0 1.5rem;white-space:normal}
 .np-doc h2,.np-doc h3{font-family:var(--serif);margin:1.4rem 0 .5rem}
 .np-doc p{margin:0 0 .9rem}
@@ -1126,21 +1152,80 @@ function toggleMenu(m){ const was = m.classList.contains('open'); closeMenus(); 
 function closeMenus(){ document.querySelectorAll('.menu').forEach(m => m.classList.remove('open')); }
 document.addEventListener('click', e => { if (!e.target.closest('.menu')) closeMenus(); });
 
-// slides
+// slides — one viewer shared by the Slides overlay and the drawer tab:
+// page images become a swipeable pager; a not-yet-converted PDF deck is
+// embedded where the browser has a viewer, else offered as a new-tab card
+function buildSlideViewer(slides, title){
+  const imgs = slides.filter(s => s.type !== 'pdf');
+  const pdf = slides.find(s => s.type === 'pdf');
+  const host = document.createElement('div'); host.className = 'sv';
+  if (imgs.length){
+    host.setAttribute('role', 'group');
+    host.setAttribute('aria-roledescription', 'carousel');
+    host.setAttribute('aria-label', title + ' slides');
+    const track = document.createElement('div'); track.className = 'sv-track';
+    imgs.forEach((s, i) => {
+      const fig = document.createElement('figure'); fig.className = 'sv-slide';
+      const img = document.createElement('img');
+      if (i) img.loading = 'lazy';
+      img.src = safeUrl(s.url);
+      img.alt = `${title} — slide ${i + 1} of ${imgs.length}`;
+      fig.appendChild(img); track.appendChild(fig);
+    });
+    host.appendChild(track);
+    if (imgs.length > 1){
+      const mk = (cls, label, d) => {
+        const b = document.createElement('button');
+        b.className = 'sv-nav ' + cls; b.setAttribute('aria-label', label);
+        b.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
+        return b;
+      };
+      const prev = mk('sv-prev', 'Previous slide', 'M15.5 4.5 8 12l7.5 7.5 1.4-1.4L10.8 12l6.1-6.1z');
+      const next = mk('sv-next', 'Next slide', 'M8.5 4.5 16 12l-7.5 7.5-1.4-1.4L13.2 12 7.1 5.9z');
+      const count = document.createElement('div'); count.className = 'sv-count';
+      count.setAttribute('aria-live', 'polite');
+      const at = () => Math.max(0, Math.min(imgs.length - 1,
+        Math.round(track.scrollLeft / Math.max(1, track.clientWidth))));
+      const update = () => {
+        count.textContent = `${at() + 1} of ${imgs.length}`;
+        prev.disabled = at() === 0; next.disabled = at() === imgs.length - 1;
+      };
+      const go = d => track.scrollTo({left: (at() + d) * track.clientWidth,
+        behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth'});
+      prev.addEventListener('click', () => go(-1));
+      next.addEventListener('click', () => go(1));
+      track.addEventListener('scroll', () => requestAnimationFrame(update), {passive: true});
+      host.append(prev, next, count);
+      update();
+    }
+    if (pdf){
+      const p = document.createElement('p'); p.className = 'sv-deck';
+      p.innerHTML = `<a href="${esc(safeUrl(pdf.url))}" target="_blank" rel="noopener">Download the deck (PDF) ›</a>`;
+      host.appendChild(p);
+    }
+  } else if (pdf){
+    if (matchMedia('(pointer:fine)').matches){
+      const fr = document.createElement('iframe'); fr.className = 'sv-pdf';
+      fr.src = safeUrl(pdf.url); fr.title = title + ' — slide deck';
+      host.appendChild(fr);
+      const p = document.createElement('p'); p.className = 'sv-deck';
+      p.innerHTML = `<a href="${esc(safeUrl(pdf.url))}" target="_blank" rel="noopener">Open in a new tab ›</a>`;
+      host.appendChild(p);
+    } else {
+      const card = document.createElement('div'); card.className = 'sv-card';
+      card.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6zm8 1.5V8h4.5zM8 12h8v1.5H8zm0 3.5h8V17H8z"/></svg>
+        <div class="tt">Slide deck</div>
+        <div class="ts">Opens in a new tab — the audio keeps playing here.</div>
+        <a href="${esc(safeUrl(pdf.url))}" target="_blank" rel="noopener">Open the deck</a>`;
+      host.appendChild(card);
+    }
+  }
+  return host;
+}
 function openSlides(it){
   $('#slides-title').textContent = it.title + ' — slides';
   const body = $('#slides-body'); body.innerHTML = '';
-  for (const s of it.slides){
-    if (s.type === 'pdf'){
-      const p = document.createElement('p'); p.className = 'pdfline';
-      p.innerHTML = `<a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener">Open slides (PDF) ›</a>`;
-      body.appendChild(p);
-    } else {
-      const img = document.createElement('img');
-      img.loading = 'lazy'; img.src = safeUrl(s.url); img.alt = it.title + ' slide';
-      body.appendChild(img);
-    }
-  }
+  body.appendChild(buildSlideViewer(it.slides, it.title));
   $('#slides-overlay').classList.add('open');
 }
 $('#slides-close').addEventListener('click', () => $('#slides-overlay').classList.remove('open'));
@@ -1191,6 +1276,8 @@ function renderNP(){
 }
 function renderNPStage(){
   npStage.scrollTop = 0;
+  // the stage is pan-y for drawer scrolling; the slide pager needs pan-x too
+  npStage.classList.toggle('has-sv', npTab === 'slides');
   if (npTab === 'art'){
     const coverImg = cur.book.coverUrl
       ? `<img alt="" src="${esc(safeUrl(cur.book.coverUrl))}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" onerror="this.remove();this.parentElement&&this.parentElement.classList.remove('has-img')">` : '';
@@ -1267,19 +1354,8 @@ function renderNPStage(){
     if (!flags.length) host.innerHTML = '<p class="np-doc outline">No flags in this book yet — tap ⚑ while listening to mark a moment, then jot a thought and it stays tied to that point in time.</p>';
     npStage.innerHTML = ''; npStage.appendChild(host);
   } else if (npTab === 'slides'){
-    npStage.innerHTML = '<div class="np-slides"></div>';
-    const host = npStage.firstChild;
-    for (const s of cur.slides){
-      if (s.type === 'pdf'){
-        const p = document.createElement('p');
-        p.innerHTML = `<a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener">Open slides (PDF) ›</a>`;
-        host.appendChild(p);
-      } else {
-        const img = document.createElement('img');
-        img.loading = 'lazy'; img.src = safeUrl(s.url); img.alt = cur.title + ' slide';
-        host.appendChild(img);
-      }
-    }
+    npStage.innerHTML = '';
+    npStage.appendChild(buildSlideViewer(cur.slides, cur.title));
   } else if (npTab === 'outline'){
     npStage.innerHTML = `<div class="np-doc outline">${esc(cur.outline)}</div>`;
   } else if (npTab === 'text'){

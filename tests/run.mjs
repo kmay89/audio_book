@@ -35,8 +35,16 @@ fs.copyFileSync(path.join(REPO, 'icon-192.png'), path.join(ROOT, 'cover-test.png
   fs.writeFileSync(path.join(ROOT, 'test.wav'), Buffer.concat([hdr, data]));
 }
 
+// a minimal one-page PDF as the slide-deck fixture
+fs.writeFileSync(path.join(ROOT, 'deck-test.pdf'), Buffer.from(
+  '%PDF-1.1\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n' +
+  '2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n' +
+  '3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 200 150]>>endobj\n' +
+  'trailer<</Root 1 0 R>>'));
+
 const MIME = {'.html': 'text/html', '.json': 'application/json', '.js': 'text/javascript',
-  '.png': 'image/png', '.wav': 'audio/wav', '.md': 'text/markdown', '.webmanifest': 'application/manifest+json'};
+  '.png': 'image/png', '.wav': 'audio/wav', '.md': 'text/markdown', '.pdf': 'application/pdf',
+  '.webmanifest': 'application/manifest+json'};
 
 const server = http.createServer((req, res) => {
   const urlPath = decodeURIComponent(new URL(req.url, 'http://x').pathname);
@@ -123,7 +131,14 @@ await page.locator('[data-act="outline"]').first().click();
 ok(await page.locator('.outline.open').isVisible(), 'outline expands');
 await page.locator('[data-act="slides"]').first().click();
 await page.waitForSelector('#slides-overlay.open');
-ok(await page.locator('#slides-body img').count() === 1, 'slides modal shows image');
+ok(await page.locator('#slides-body .sv-slide img').count() === 2, 'slides modal shows page images');
+ok((await page.locator('#slides-body .sv-count').textContent()) === '1 of 2', 'slide counter starts at 1');
+ok(await page.locator('#slides-body .sv-deck a').count() === 1, 'deck download link under pager');
+await page.locator('#slides-close').click();
+// a pdf-only deck (not yet rasterized) embeds an inline viewer on fine pointers
+await page.locator('[data-act="slides"]').nth(1).click();
+await page.waitForSelector('#slides-overlay.open');
+ok(await page.locator('#slides-body iframe.sv-pdf').count() === 1, 'pdf-only deck embeds inline viewer');
 await page.locator('#slides-close').click();
 
 // 4. play chapter 1, audio advances
@@ -158,7 +173,15 @@ ok(Math.abs(await page.evaluate(() => document.querySelector('#player').volume) 
 await page.locator('#np-vol').fill('100');
 ok(await page.locator('#np-tabs a[target="_blank"]').count() === 1, 'drawer Read link present');
 await page.locator('#np-tabs [data-tab="slides"]').click();
-ok(await page.locator('.np-slides img').count() === 1, 'slides tab shows image');
+ok(await page.locator('#np-stage .sv-slide img').count() === 2, 'slides tab shows swipeable pages');
+ok((await page.locator('#np-stage .sv-count').textContent()) === '1 of 2', 'slides pager counter');
+ok(await page.locator('#np-stage .sv-prev').isDisabled(), 'prev arrow disabled on first slide');
+await page.locator('#np-stage .sv-next').click();
+await page.waitForFunction(() => {
+  const c = document.querySelector('#np-stage .sv-count');
+  return c && c.textContent === '2 of 2';
+}, null, {timeout: 5000});
+ok(true, 'next arrow advances the pager');
 await page.locator('#np-tabs [data-tab="text"]').click();
 await page.waitForFunction(() => document.querySelector('.np-doc') && document.querySelector('.np-doc').textContent.includes('remembers'), null, {timeout: 5000});
 ok(await page.locator('.np-doc h2').textContent() === 'The Candle', 'text companion renders markdown heading');

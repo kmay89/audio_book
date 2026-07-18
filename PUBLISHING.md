@@ -28,9 +28,11 @@ designed so that publishing anything is a drag-and-drop, and everything else
    into the assets box. Companions ride along by filename:
    `…__outline.txt`, `…__slides.pdf`, `…__slide-01.png` ….
 4. **Sync**: Actions → *Sync catalog from releases* → *Run workflow* (a daily
-   run is the backstop). It reads real durations, updates `catalog.json`,
-   commits, and Netlify redeploys. Done — the episode is live, linked to its
-   chapter, with length shown and position memory for every listener.
+   run is the backstop). It transcodes non-MP3 audio, converts each PDF deck's
+   pages into swipeable slide images (`tools/slides.mjs`), reads real
+   durations, updates `catalog.json`, commits, and Netlify redeploys. Done —
+   the episode is live, linked to its chapter, with length shown, slides in
+   the player, and position memory for every listener.
 
 Removing an asset from the release and re-syncing unpublishes it. The
 releases are the source of truth for media.
