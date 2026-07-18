@@ -27,6 +27,10 @@ if ((!URL_IN && !HTML_IN) || !BOOK || !SLUG){
   process.exit(1);
 }
 if (!/^[\w-]+$/.test(BOOK) || !/^[\w-]+$/.test(SLUG)){ console.error('book/slug must be simple slugs'); process.exit(1); }
+if (URL_IN){
+  try { const u = new URL(URL_IN); if (!/^https?:$/.test(u.protocol)) throw 0; }
+  catch(e){ console.error('--url must be a valid http(s) URL'); process.exit(1); }
+}
 
 const UA = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 hear-my-book-import'};
 
@@ -40,16 +44,20 @@ else {
 }
 
 const meta = prop => {
-  const m = html.match(new RegExp(`<meta[^>]+(?:property|name)=["']${prop}["'][^>]+content=["']([^"']+)["']`, 'i'))
-    || html.match(new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["']${prop}["']`, 'i'));
+  const m = html.match(new RegExp(`<meta[^>]+(?:property|name)\\s*=\\s*["']${prop}["'][^>]+content\\s*=\\s*["']([^"']+)["']`, 'i'))
+    || html.match(new RegExp(`<meta[^>]+content\\s*=\\s*["']([^"']+)["'][^>]+(?:property|name)\\s*=\\s*["']${prop}["']`, 'i'));
   return m ? m[1] : null;
 };
-const unescapeUrl = u => u.replace(/\\u002F/gi, '/').replace(/\\\//g, '/').replace(/&amp;/g, '&');
+const base = URL_IN || 'https://example.invalid/';
+const unescapeUrl = u => {
+  const clean = u.replace(/\\u002F/gi, '/').replace(/\\\//g, '/').replace(/&amp;/g, '&');
+  try { return new URL(clean, base).href; } catch(e){ return clean; } // resolve relative against the page
+};
 
 const audioCandidates = new Set();
 for (const p of ['og:audio:secure_url', 'og:audio', 'twitter:player:stream'])
   { const v = meta(p); if (v) audioCandidates.add(unescapeUrl(v)); }
-for (const m of html.matchAll(/<(?:audio|source)[^>]+src=["']([^"']+)["']/gi)) audioCandidates.add(unescapeUrl(m[1]));
+for (const m of html.matchAll(/<(?:audio|source)[^>]+src\s*=\s*["']([^"']+)["']/gi)) audioCandidates.add(unescapeUrl(m[1]));
 // generic sweep over an unescaped copy so JSON-embedded (\/-escaped) URLs match too
 const flat = html.replace(/\\u002F/gi, '/').replace(/\\\//g, '/');
 for (const m of flat.matchAll(/https?:\/\/[^\s"'<>\\]+?\.(?:mp3|m4a|wav|ogg|opus)(?:\?[^\s"'<>\\]*)?/gi))
@@ -71,8 +79,9 @@ if (!audioCandidates.size){
 async function probe(u){
   try {
     const res = await fetch(u, {headers: {...UA, Range: 'bytes=0-1'}, redirect: 'follow'});
-    if (!res.ok && res.status !== 206) return null;
     const type = res.headers.get('content-type') || '';
+    if (res.body) res.body.cancel().catch(() => {});
+    if (!res.ok && res.status !== 206) return null;
     const range = res.headers.get('content-range');
     const size = range ? +range.split('/')[1] : +(res.headers.get('content-length') || 0);
     return {url: u, type, size};
@@ -111,7 +120,8 @@ if (!rel.id) throw new Error(`release ${book.releaseTag} not found — create it
 async function put(name, buf, type){
   const dup = (rel.assets || []).find(a => a.name === name);
   if (dup){
-    await fetch(dup.url, {method: 'DELETE', headers: gh});
+    const del = await fetch(dup.url, {method: 'DELETE', headers: gh});
+    if (!del.ok && del.status !== 204) throw new Error(`delete existing ${name} -> ${del.status}`);
     console.log(`replaced existing ${name}`);
   }
   const up = await fetch(rel.upload_url.replace(/\{.*\}$/, '') + `?name=${encodeURIComponent(name)}`,
@@ -120,7 +130,9 @@ async function put(name, buf, type){
   console.log(`uploaded ${name} (${(buf.length / 1048576).toFixed(1)} MB)`);
 }
 
-const ext = (chosen.url.match(/\.(mp3|m4a|wav|ogg|opus)(\?|$)/) || [, 'mp3'])[1];
+const TYPE_EXT = [[/mpeg|mp3/, 'mp3'], [/mp4|m4a|aac/, 'm4a'], [/wav/, 'wav'], [/ogg|opus/, 'ogg']];
+const extFromType = t => (TYPE_EXT.find(([re]) => re.test(t || '')) || [, null])[1];
+const ext = (chosen.url.match(/\.(mp3|m4a|wav|ogg|opus)(\?|$)/) || [])[1] || extFromType(chosen.type) || 'mp3';
 const audioBuf = Buffer.from(await (await fetch(chosen.url, {headers: UA, redirect: 'follow'})).arrayBuffer());
 await put(`${BOOK}__${SLUG}.${ext}`, audioBuf, 'application/octet-stream');
 
