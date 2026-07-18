@@ -67,6 +67,21 @@ Two ideas to hold on to:
 file (same name), run the sync. **Unpublish**: delete the chapter's assets and
 run the sync — the chapter reverts to "text only".
 
+### Import straight from a share link (songs, generated audio)
+
+For tools that give you a share page instead of a file (AI song generators
+etc.): Actions → **Import from share link** → paste the URL, pick the book
+and a slug (a chapter slug, or a new slug like `song-first-light` for an
+extra). Leave **publish** unchecked first — the dry run reports every audio
+URL the page serves with its real size and content type (that's how you check
+whether the share stream matches download quality). Re-run with **publish**
+checked and it uploads the biggest audio + the page artwork (as `__slide-01`)
+to the release, transcodes, and syncs — live in one go. If a page loads audio
+only through authenticated APIs, the report says so; fall back to the tool's
+own Download button and the normal upload.
+Mind the generator's terms for rights over generated audio before publishing
+publicly.
+
 ---
 
 ## Add a new book to the library
