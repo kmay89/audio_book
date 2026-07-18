@@ -42,12 +42,15 @@ for (const u of URLS){
 }
 
 const UA = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 hear-my-book-import'};
-const slugify = s => ('song-' + String(s).toLowerCase().normalize('NFKD')
-  .replace(/[^\w\s-]/g, '').trim().replace(/[\s_]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, ''))
-  .slice(0, 60).replace(/-+$/, '') || 'song-untitled';
+const slugify = s => {
+  const core = String(s).toLowerCase().normalize('NFKD')
+    .replace(/[^\w\s-]/g, '').trim().replace(/[\s_]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
+    .slice(0, 54).replace(/-+$/, '');
+  return 'song-' + (core || 'untitled');
+};
 
 // ---------- page parsing ----------
-function parsePage(html, baseUrl){
+function parsePage(html, baseUrl, allowCrossHost = false){
   const meta = prop => {
     const m = html.match(new RegExp(`<meta[^>]+(?:property|name)\\s*=\\s*["']${prop}["'][^>]+content\\s*=\\s*["']([^"']+)["']`, 'i'))
       || html.match(new RegExp(`<meta[^>]+content\\s*=\\s*["']([^"']+)["'][^>]+(?:property|name)\\s*=\\s*["']${prop}["']`, 'i'));
@@ -75,7 +78,7 @@ function parsePage(html, baseUrl){
   let host = null; try { host = new URL(baseUrl).host; } catch(e){}
   for (const m of flat.matchAll(/(?:href\s*=\s*["']|")((?:https?:\/\/[^\s"'<>]+)?\/song\/[\w-]+[^\s"'<>]*)["']/gi)){
     const u = resolveUrl(m[1]);
-    try { if (!host || new URL(u).host === host) songLinks.add(u.split('#')[0]); } catch(e){}
+    try { if (allowCrossHost || !host || new URL(u).host === host) songLinks.add(u.split('#')[0]); } catch(e){}
   }
 
   const title = meta('og:title') || (html.match(/<title[^>]*>([^<]+)</i) || [])[1] || null;
@@ -183,8 +186,12 @@ async function importSong(url, page){
 }
 
 // ---------- main ----------
+if (!DRY && !HTML_IN && !process.env.GITHUB_TOKEN){
+  console.error('GITHUB_TOKEN is required to publish (dry-run works without it)');
+  process.exit(1);
+}
 if (HTML_IN){
-  const page = parsePage(fs.readFileSync(HTML_IN, 'utf8'), 'https://example.invalid/');
+  const page = parsePage(fs.readFileSync(HTML_IN, 'utf8'), 'https://example.invalid/', true);
   console.log(`page: (local file)`);
   if (page.songLinks.length) console.log(`song links found: ${page.songLinks.join(', ')}`);
   await importSong('file://' + HTML_IN, page);
