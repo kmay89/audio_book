@@ -22,6 +22,10 @@ if (!BOOK || !FOLDER){
   console.error('usage: node tools/rename-batch.mjs <book-slug> <folder> [--dry-run]');
   process.exit(1);
 }
+if (!fs.existsSync(FOLDER) || !fs.statSync(FOLDER).isDirectory()){
+  console.error(`not a folder: ${FOLDER}`);
+  process.exit(1);
+}
 const catalog = JSON.parse(fs.readFileSync(path.join(ROOT, 'catalog.json'), 'utf8'));
 const book = catalog.books.find(b => b.slug === BOOK);
 if (!book) { console.error(`no book '${BOOK}' in catalog.json`); process.exit(1); }
@@ -36,7 +40,7 @@ const imgCount = new Map();
 let renamed = 0;
 const untouched = [];
 for (const f of files){
-  const m = f.match(/^(\d{1,2})\b/);
+  const m = f.match(/^(\d{1,2})(?!\d)/);
   const ext = path.extname(f).toLowerCase();
   const n = m ? +m[1] : null;
   const slug = n != null ? bySlugN.get(n) : null;
@@ -57,4 +61,4 @@ for (const f of files){
 }
 if (untouched.length) console.log(`\nleft alone (no leading chapter number or unknown type): ${untouched.join(', ')}`);
 console.log(`\n${DRY ? '[dry-run] would rename' : 'renamed'} ${renamed} file(s).`);
-console.log(`next: gh release upload ${book.releaseTag} * --repo ${catalog.mediaRepo} --clobber`);
+console.log(`next: cd "${FOLDER}" && gh release upload ${book.releaseTag} * --repo ${catalog.mediaRepo} --clobber`);
