@@ -21,7 +21,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 import {audioDuration} from './duration.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -48,17 +48,20 @@ async function download(asset){
   return Buffer.from(await res.arrayBuffer());
 }
 
-function parseName(name){
+export function parseName(name){
   // canonical: <book>__<slug>[__<extra>].<ext>
   const ext = path.extname(name).toLowerCase();
   const stem = name.slice(0, name.length - ext.length);
   const parts = stem.split('__');
   if (parts.length >= 2){
-    const [book, slug, ...rest] = parts;
+    let [book, slug, ...rest] = parts;
+    // forgiving: a single underscore where the double belongs
+    // (grows_ch-see__slides.pdf) — book slugs never contain underscores
+    const us = book.indexOf('_');
+    if (us > 0){ rest.unshift(slug); slug = book.slice(us + 1); book = book.slice(0, us); }
     return {book, slug, extra: rest.join('__') || null, ext, name};
   }
-  // forgiving fallback: a single underscore after the book slug
-  // (e.g. grows_ch-see.m4a) — book slugs never contain underscores
+  // same forgiveness with no companion suffix (grows_ch-see.m4a)
   const us = stem.indexOf('_');
   if (us > 0 && us < stem.length - 1)
     return {book: stem.slice(0, us), slug: stem.slice(us + 1), extra: null, ext, name};
@@ -183,4 +186,5 @@ async function main(){
 
 const fmt = s => `${Math.floor(s/60)}:${String(s%60).padStart(2, '0')}`;
 
-main().catch(err => { console.error(err.message || err); process.exit(1); });
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href)
+  main().catch(err => { console.error(err.message || err); process.exit(1); });

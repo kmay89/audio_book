@@ -41,8 +41,9 @@ Two ideas to hold on to:
 2. **Rename** to the convention:
    `<book>__<chapter-slug>.<ext>` — e.g. `grows__ch-cathedral.m4a`.
    - Book and chapter slugs are in `catalog.json`.
-   - Double underscore `__` is canonical. A single `_` is tolerated for plain
-     audio, but companions (below) **require** the double.
+   - Double underscore `__` is canonical. A single `_` between book and
+     chapter is tolerated everywhere (audio and companions), but don't rely
+     on it — the double is what every example and tool prints.
    - A slug that isn't a chapter becomes an "extra" (e.g. `grows__overview.mp3`
      for a whole-book Audio Overview) — extras appear in an "Overviews &
      extras" section and in Up Next.
