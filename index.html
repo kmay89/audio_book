@@ -1287,8 +1287,10 @@ function lbPointerEnd(e){
     const now = Date.now();
     if (now - lbLastTap < 300 && Math.hypot(e.clientX - lbTapAt[0], e.clientY - lbTapAt[1]) < 30){
       lbLastTap = 0; lbZoomAt(e.clientX, e.clientY);
-    } else { lbLastTap = now; lbTapAt = [e.clientX, e.clientY]; }
-    if (lbS === 1){ lbTx = 0; lbTy = 0; lbApply(false); }
+    } else {
+      lbLastTap = now; lbTapAt = [e.clientX, e.clientY];
+      if (lbS === 1){ lbTx = 0; lbTy = 0; lbApply(false); }
+    }
   } else if (lbS === 1){
     if (dy > 90 && dy > Math.abs(dx)){ lbDrag = null; return lbClose(); }
     if (dx < -50 && lbIdx < lbImgs.length - 1) lbShow(lbIdx + 1);
@@ -1307,8 +1309,8 @@ lbNext.addEventListener('click', () => lbShow(lbIdx + 1));
 document.addEventListener('keydown', e => {
   if (!lb.classList.contains('open')) return;
   if (e.key === 'Escape'){ e.stopPropagation(); lbClose(); }
-  else if (e.key === 'ArrowRight'){ e.stopPropagation(); lbShow(lbIdx + 1); }
-  else if (e.key === 'ArrowLeft'){ e.stopPropagation(); lbShow(lbIdx - 1); }
+  else if (e.key === 'ArrowRight'){ e.stopPropagation(); if (lbIdx < lbImgs.length - 1) lbShow(lbIdx + 1); }
+  else if (e.key === 'ArrowLeft'){ e.stopPropagation(); if (lbIdx > 0) lbShow(lbIdx - 1); }
 }, {capture: true});
 
 // slides — one viewer shared by the Slides overlay and the drawer tab:
