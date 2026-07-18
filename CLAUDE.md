@@ -25,7 +25,8 @@ Docs: `GETTING-STARTED.md` (step-by-step + watch-outs — **read it first**),
   blocks (`audio`, `slides`, `text`, `outlineFromAsset`) are written by the
   sync; everything else is human-owned. Ownership table in GETTING-STARTED.
 - `tools/` — `sync.mjs` (release assets → catalog; runs in Actions),
-  `normalize.mjs` (ffmpeg transcode to 128k MP3 in CI), `fetch-media.mjs` +
+  `normalize.mjs` (ffmpeg transcode to 128k MP3 in CI), `slides.mjs`
+  (PDF decks → per-page slide images in CI), `fetch-media.mjs` +
   `build-feeds.mjs` (Netlify build steps), `duration.mjs` (stdlib MP3/M4A/WAV
   parsers), `make-icons.mjs` / `make-og.mjs` (asset regeneration).
 - `.github/workflows/` — `sync-catalog.yml` (normalize + sync, dispatch/daily),

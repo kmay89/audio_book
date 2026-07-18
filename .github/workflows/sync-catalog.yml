@@ -26,12 +26,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install ffmpeg
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Install ffmpeg + poppler
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg poppler-utils
       - name: Normalize media (transcode non-MP3 audio to 128k MP3)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node tools/normalize.mjs
+      - name: Rasterize slide decks (PDF → per-page slide images)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node tools/slides.mjs
       - name: Sync catalog.json against media releases
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

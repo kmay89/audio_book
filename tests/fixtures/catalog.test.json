@@ -41,8 +41,18 @@
           "outline": "A tour of light as information.\n- The candle problem\n- Entropy arrives",
           "slides": [
             {
+              "file": "deck.pdf",
+              "url": "deck-test.pdf",
+              "type": "pdf"
+            },
+            {
               "file": "icon-512.png",
               "url": "icon-512.png",
+              "type": "image"
+            },
+            {
+              "file": "icon-192.png",
+              "url": "icon-192.png",
               "type": "image"
             }
           ],
@@ -63,7 +73,13 @@
             "duration": 30
           },
           "outline": null,
-          "slides": []
+          "slides": [
+            {
+              "file": "deck.pdf",
+              "url": "deck-test.pdf",
+              "type": "pdf"
+            }
+          ]
         },
         {
           "n": 3,
@@ -106,7 +122,7 @@
     {
       "slug": "goes",
       "title": "Everything That Goes",
-      "tagline": "Book five — in the works",
+      "tagline": "Book five \u2014 in the works",
       "author": "Karl Meves",
       "accent": "#1f5f5b",
       "accentBright": "#2f8f88",
