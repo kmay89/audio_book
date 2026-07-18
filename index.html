@@ -84,6 +84,8 @@ header.top{position:sticky;top:0;z-index:30;background:var(--paper);border-botto
 .aa-row button{border:1px solid var(--rule);border-radius:999px;padding:.2rem .75rem;font-size:.85rem;color:var(--muted)}
 .aa-row button:hover{border-color:var(--accent-bright)}
 .aa-row button[aria-pressed="true"]{border-color:var(--accent-bright);color:var(--accent-bright);font-weight:600}
+.aa-note{font-size:.76rem;color:var(--faint);margin:.35rem 0 0;max-width:36rem;line-height:1.5}
+.aa-note strong{color:var(--muted)}
 
 main{max-width:72rem;margin:0 auto;padding:1.2rem 1rem 2rem}
 #view-home .lede,#view-home .eyebrow,#view-home h1{max-width:42rem}
@@ -350,6 +352,16 @@ footer .spectral{margin-bottom:.8rem}
     <div class="aa-row"><span class="aa-k">Text size</span>
       <button data-size-set="s">S</button><button data-size-set="m">M</button>
       <button data-size-set="l">L</button><button data-size-set="xl">XL</button></div>
+    <div class="aa-row"><span class="aa-k">Your data</span>
+      <button id="btn-export">Back up</button>
+      <button id="btn-import">Restore</button>
+      <input type="file" id="import-file" accept="application/json,.json" hidden></div>
+    <p class="aa-note" id="data-status" aria-live="polite"></p>
+    <p class="aa-note">Your places, finished marks, and flags are saved automatically — on this
+      device only, never sent anywhere. Clearing this site's browsing data erases them, so back up
+      first if you're cleaning house or switching devices. On iPhone or iPad, <strong>Add to Home
+      Screen</strong> also makes the storage permanent (Safari can clear data of ordinary sites it
+      hasn't seen for a while).</p>
   </div>
 </header>
 
@@ -877,7 +889,20 @@ function saveProgress(force){
   if (!force && now - lastSaved < 5000) return;
   lastSaved = now;
   const t = audio.currentTime;
-  if (t > 3) LS.set(posKey(cur), String(Math.floor(t)));
+  if (t > 3){
+    LS.set(posKey(cur), String(Math.floor(t)));
+    requestPersistence(); // there is now data worth protecting
+  }
+}
+
+// ask the browser to never auto-evict this site's storage (Chrome/Android
+// grants it for installed/engaged sites; harmless no-op elsewhere)
+let persistenceAsked = false;
+function requestPersistence(){
+  if (persistenceAsked) return;
+  persistenceAsked = true;
+  if (navigator.storage && navigator.storage.persist)
+    navigator.storage.persist().catch(() => {});
 }
 
 function updateSeekFill(){
@@ -1299,6 +1324,7 @@ function flagMoment(){
   if (flags.some(f => f.k === cur.key && Math.abs(f.t - t) < 5)){ toast('Already flagged right here'); return; }
   flags.push({k: cur.key, t, c: Date.now()});
   saveFlags(flags);
+  requestPersistence();
   toast(`⚑ Flagged at ${fmt(t)}`);
   if (npIsOpen()) renderNP();
 }
@@ -1426,7 +1452,75 @@ aaBtn.addEventListener('click', () => {
   const open = aaPanel.hidden;
   aaPanel.hidden = !open;
   aaBtn.setAttribute('aria-expanded', String(open));
-  if (open) syncAa();
+  if (open){ syncAa(); updateDataStatus(); }
+});
+
+// ---------- your data: status, back up, restore ----------
+function abKeys(){
+  const out = {};
+  try {
+    for (let i = 0; i < localStorage.length; i++){
+      const k = localStorage.key(i);
+      if (k && k.startsWith('ab-')) out[k] = localStorage.getItem(k);
+    }
+  } catch(e){}
+  return out;
+}
+async function updateDataStatus(){
+  const keys = abKeys();
+  const inProgress = Object.keys(keys).filter(k => k.startsWith('ab-pos:')).length;
+  const done = Object.keys(keys).filter(k => k.startsWith('ab-done:')).length;
+  const flags = getFlags().length;
+  let persisted = '';
+  try {
+    if (navigator.storage && navigator.storage.persisted)
+      persisted = (await navigator.storage.persisted()) ? ' · storage protected by the browser' : '';
+  } catch(e){}
+  const bits = [];
+  if (inProgress) bits.push(`${inProgress} chapter${inProgress === 1 ? '' : 's'} in progress`);
+  if (done) bits.push(`${done} finished`);
+  if (flags) bits.push(`${flags} flag${flags === 1 ? '' : 's'}`);
+  $('#data-status').textContent = (bits.length ? `Saved here: ${bits.join(' · ')}` : 'Nothing saved yet — press play and your place starts being remembered.') + persisted;
+}
+$('#btn-export').addEventListener('click', () => {
+  const payload = {
+    app: 'hear-my-book',
+    schemaVersion: 1,
+    exported: new Date().toISOString(),
+    data: abKeys(),
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'hear-my-book-backup.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  toast('Backup downloaded — keep it somewhere safe');
+});
+$('#btn-import').addEventListener('click', () => $('#import-file').click());
+$('#import-file').addEventListener('change', async e => {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  try {
+    const payload = JSON.parse(await file.text());
+    if (payload.app !== 'hear-my-book' || !payload.data) throw new Error('not a backup');
+    let n = 0;
+    for (const [k, v] of Object.entries(payload.data)){
+      if (!k.startsWith('ab-') || typeof v !== 'string') continue;
+      // merge positions by keeping the furthest point; everything else restores
+      if (k.startsWith('ab-pos:')){
+        const existing = +LS.get(k, 0);
+        LS.set(k, String(Math.max(existing, +v || 0)));
+      } else LS.set(k, v);
+      n++;
+    }
+    applyRate(parseFloat(LS.get('ab-rate', '1')) || 1);
+    refreshRows(); updateDataStatus();
+    toast(`Restored ${n} saved item${n === 1 ? '' : 's'}`);
+  } catch(err){
+    toast("That file doesn't look like a hear-my-book backup.");
+  }
 });
 aaPanel.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
