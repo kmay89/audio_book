@@ -1,0 +1,36 @@
+# Netlify deploy for the Everything audio player — static root, no build.
+
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    # media-src allows the GitHub release assets (they redirect to objects.githubusercontent.com);
+    # img-src likewise for slide images.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://github.com https://objects.githubusercontent.com https://release-assets.githubusercontent.com; media-src 'self' https://github.com https://objects.githubusercontent.com https://release-assets.githubusercontent.com; connect-src 'self'; base-uri 'none'; form-action 'none'"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+    Service-Worker-Allowed = "/"
+
+[[headers]]
+  for = "/catalog.json"
+  [headers.values]
+    Cache-Control = "public, max-age=300, must-revalidate"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"

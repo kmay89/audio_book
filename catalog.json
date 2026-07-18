@@ -1,0 +1,548 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-07-18T00:00:00Z",
+  "publisher": "Errerlabs",
+  "mediaRepo": "kmay89/audio_book",
+  "books": [
+    {
+      "slug": "glows",
+      "title": "Everything That Glows",
+      "tagline": "Information is physical",
+      "author": "Karl Meves",
+      "accent": "#34346b",
+      "accentBright": "#5757c8",
+      "readUrl": "https://everythingthatglows.com/read.html",
+      "releaseTag": "media-glows",
+      "extras": [],
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "ch-glows",
+          "title": "Everything That Glows",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 2,
+          "slug": "ch-remembers",
+          "title": "Everything That Remembers",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 3,
+          "slug": "ch-lives",
+          "title": "Everything That Lives",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 4,
+          "slug": "ch-falls",
+          "title": "Everything That Falls",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 5,
+          "slug": "ch-holds",
+          "title": "Everything That Holds",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 6,
+          "slug": "ch-reflects",
+          "title": "Everything That Reflects",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 7,
+          "slug": "ch-works",
+          "title": "Everything That Works",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 8,
+          "slug": "ch-counts",
+          "title": "Everything That Counts",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 9,
+          "slug": "ch-guests",
+          "title": "The Two Uninvited Guests",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 10,
+          "slug": "ch-music",
+          "title": "The Music No One Composed",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 11,
+          "slug": "ch-made-world",
+          "title": "The Made World",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 12,
+          "slug": "ch-light",
+          "title": "While the Light Lasts",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        }
+      ]
+    },
+    {
+      "slug": "grows",
+      "title": "Everything That Grows",
+      "tagline": "The Oldest Language",
+      "author": "Karl Meves",
+      "accent": "#3a4a63",
+      "accentBright": "#52689a",
+      "readUrl": "https://everything-that-grows.com/read.html",
+      "releaseTag": "media-grows",
+      "extras": [],
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "ch-origins",
+          "title": "The First Mark",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 2,
+          "slug": "ch-language",
+          "title": "The Language of Everything",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 3,
+          "slug": "ch-other-book",
+          "title": "The Other Book",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 4,
+          "slug": "ch-unknown",
+          "title": "The Unknown Made Visible",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 5,
+          "slug": "ch-number",
+          "title": "The Widening of Number",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 6,
+          "slug": "ch-motion",
+          "title": "Catching Motion",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 7,
+          "slug": "ch-chance",
+          "title": "The Arithmetic of Maybe",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 8,
+          "slug": "ch-shape",
+          "title": "Shapes Numbers Can't Hold",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 9,
+          "slug": "ch-curve",
+          "title": "The Curving of Space",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 10,
+          "slug": "ch-symmetry",
+          "title": "The Symmetry Underneath",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 11,
+          "slug": "ch-relation",
+          "title": "Everything Is Relation",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 12,
+          "slug": "ch-infinity",
+          "title": "Sizes of Forever",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 13,
+          "slug": "ch-edges",
+          "title": "The Edges of Knowledge",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 14,
+          "slug": "ch-found",
+          "title": "Invented or Found",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 15,
+          "slug": "ch-built",
+          "title": "The World It Built",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 16,
+          "slug": "ch-machine",
+          "title": "The Thinking Machine",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 17,
+          "slug": "ch-cathedral",
+          "title": "The Unfinished Cathedral",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 18,
+          "slug": "ch-see",
+          "title": "How to See It",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        }
+      ]
+    },
+    {
+      "slug": "knows",
+      "title": "Everything That Knows",
+      "tagline": "The Last Question",
+      "author": "Karl Meves",
+      "accent": "#4a3a86",
+      "accentBright": "#7458c8",
+      "readUrl": "https://everythingthatknows.com/read.html",
+      "releaseTag": "media-knows",
+      "extras": [],
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "ch-certain",
+          "title": "The One Certain Thing",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 2,
+          "slug": "ch-hard",
+          "title": "The Hard Problem",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 3,
+          "slug": "ch-colors",
+          "title": "The Colors We Cannot Share",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 4,
+          "slug": "ch-bat",
+          "title": "What Is It Like to Be a Bat?",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 5,
+          "slug": "ch-organ",
+          "title": "The Organ That Dreams Itself",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 6,
+          "slug": "ch-hunting",
+          "title": "Hunting the Soul",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 7,
+          "slug": "ch-theories",
+          "title": "The Theories of the Light",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 8,
+          "slug": "ch-predicting",
+          "title": "The Predicting Machine",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 9,
+          "slug": "ch-spectrum",
+          "title": "The Spectrum of the Living",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 10,
+          "slug": "ch-octopus",
+          "title": "The Mind with Eight Arms",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 11,
+          "slug": "ch-brainless",
+          "title": "Minds Without Brains?",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 12,
+          "slug": "ch-others",
+          "title": "The Others Who Look Back",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 13,
+          "slug": "ch-newest",
+          "title": "The Newest Mind",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 14,
+          "slug": "ch-self",
+          "title": "The Self That Isn't There",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 15,
+          "slug": "ch-will",
+          "title": "The Question of the Will",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 16,
+          "slug": "ch-edge",
+          "title": "The Edge of the Inside",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 17,
+          "slug": "ch-aware",
+          "title": "The Universe Becomes Aware of Itself",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 18,
+          "slug": "ch-live",
+          "title": "How to Live Without the Answer",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        }
+      ]
+    },
+    {
+      "slug": "shows",
+      "title": "Everything That Shows",
+      "tagline": "The Weight of Looking",
+      "author": "Karl Meves",
+      "accent": "#8a5a12",
+      "accentBright": "#a8761f",
+      "readUrl": "https://everythingthatshows.com/read.html",
+      "releaseTag": "media-shows",
+      "extras": [],
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "ch-looking",
+          "title": "The Weight of Looking",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 2,
+          "slug": "ch-edge",
+          "title": "The Edge You Can't See",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 3,
+          "slug": "ch-behind",
+          "title": "The One Behind the Eyes",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 4,
+          "slug": "ch-sealed",
+          "title": "The Sealed Room",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 5,
+          "slug": "ch-stand",
+          "title": "From Where They Stand",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 6,
+          "slug": "ch-second",
+          "title": "The Second Mind",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 7,
+          "slug": "ch-silent",
+          "title": "The Silent World",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 8,
+          "slug": "ch-answer",
+          "title": "Learning to Answer",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 9,
+          "slug": "ch-lights",
+          "title": "The Lights Are On",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 10,
+          "slug": "ch-counts",
+          "title": "What Counts as One",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 11,
+          "slug": "ch-earth",
+          "title": "The Whole Earth",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 12,
+          "slug": "ch-witness",
+          "title": "The Witness",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 13,
+          "slug": "ch-alone",
+          "title": "Nothing Is Itself Alone",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        }
+      ]
+    }
+  ]
+}
