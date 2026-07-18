@@ -1194,7 +1194,10 @@ function buildSlideViewer(slides, title){
         behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth'});
       prev.addEventListener('click', () => go(-1));
       next.addEventListener('click', () => go(1));
-      track.addEventListener('scroll', () => requestAnimationFrame(update), {passive: true});
+      let raf = 0;
+      track.addEventListener('scroll', () => {
+        if (!raf) raf = requestAnimationFrame(() => { raf = 0; update(); });
+      }, {passive: true});
       host.append(prev, next, count);
       update();
     }
