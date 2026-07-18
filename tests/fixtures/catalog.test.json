@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-07-18T00:00:00Z",
+  "publisher": "Errerlabs",
+  "mediaRepo": "kmay89/audio_book",
+  "books": [
+    {
+      "slug": "glows",
+      "title": "Everything That Glows",
+      "tagline": "Information is physical",
+      "author": "Karl Meves",
+      "accent": "#34346b",
+      "accentBright": "#5757c8",
+      "readUrl": "https://everythingthatglows.com/read.html",
+      "releaseTag": "media-glows",
+      "extras": [
+        {
+          "slug": "overview",
+          "title": "Audio Overview",
+          "audio": {
+            "file": "test.wav",
+            "url": "test.wav",
+            "bytes": 480044,
+            "duration": 30
+          },
+          "outline": null,
+          "slides": []
+        }
+      ],
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "ch-glows",
+          "title": "Everything That Glows",
+          "audio": {
+            "file": "test.wav",
+            "url": "test.wav",
+            "bytes": 480044,
+            "duration": 30
+          },
+          "outline": "A tour of light as information.\n- The candle problem\n- Entropy arrives",
+          "slides": [
+            {
+              "file": "icon-512.png",
+              "url": "icon-512.png",
+              "type": "image"
+            }
+          ],
+          "text": {
+            "file": "t.md",
+            "url": "text-sample.md",
+            "sourceUrl": null
+          }
+        },
+        {
+          "n": 2,
+          "slug": "ch-remembers",
+          "title": "Everything That Remembers",
+          "audio": {
+            "file": "test.wav",
+            "url": "test.wav",
+            "bytes": 480044,
+            "duration": 30
+          },
+          "outline": null,
+          "slides": []
+        },
+        {
+          "n": 3,
+          "slug": "ch-lives",
+          "title": "Everything That Lives",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        }
+      ],
+      "order": 1,
+      "description": "The deepest idea in modern physics: that information is physical.",
+      "epubUrl": "https://github.com/kmay89/everything/releases/latest/download/everything-that-glows.epub",
+      "coverUrl": "cover-test.png"
+    },
+    {
+      "slug": "grows",
+      "title": "Everything That Grows",
+      "tagline": "The Oldest Language",
+      "author": "Karl Meves",
+      "accent": "#3a4a63",
+      "accentBright": "#52689a",
+      "readUrl": "https://everything-that-grows.com/read.html",
+      "releaseTag": "media-grows",
+      "extras": [],
+      "chapters": [
+        {
+          "n": 1,
+          "slug": "ch-origins",
+          "title": "The First Mark",
+          "audio": null,
+          "outline": null,
+          "slides": []
+        }
+      ],
+      "order": 2,
+      "description": "A history of mathematics and what it actually is.",
+      "epubUrl": "https://github.com/kmay89/everythingthatgrows/releases/latest/download/everything-that-grows.epub"
+    },
+    {
+      "slug": "goes",
+      "title": "Everything That Goes",
+      "tagline": "Book five — in the works",
+      "author": "Karl Meves",
+      "accent": "#1f5f5b",
+      "accentBright": "#2f8f88",
+      "readUrl": null,
+      "releaseTag": "media-goes",
+      "extras": [
+        {
+          "slug": "preview",
+          "title": "First Preview",
+          "audio": {
+            "file": "test.wav",
+            "url": "test.wav",
+            "bytes": 480044,
+            "duration": 30
+          },
+          "outline": null,
+          "slides": []
+        }
+      ],
+      "chapters": [],
+      "order": 5,
+      "description": "The fifth book is being written.",
+      "epubUrl": null
+    }
+  ],
+  "series": {
+    "name": "The Everything Series",
+    "line": "test",
+    "author": "Karl Meves",
+    "publisher": "Errerlabs"
+  },
+  "siteUrl": "https://hear-my-book.com"
+}

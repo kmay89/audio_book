@@ -15,6 +15,8 @@ designed so that publishing anything is a drag-and-drop, and everything else
 | the catalog | `catalog.json` | what exists, wired together |
 | the library | `index.html` on hear-my-book.com | the public face: read, listen, download |
 | the sync | `tools/sync.mjs` + the *Sync catalog* workflow | turns uploaded assets into catalog entries |
+| the feeds | `tools/build-feeds.mjs` (Netlify build) | podcast RSS per book → native apps, CarPlay/Android Auto |
+| the tests | `tests/` + CI | 85-assertion player suite + parser units on every push |
 
 ## Publish an audio episode (the 4-step loop)
 

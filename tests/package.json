@@ -1,0 +1,11 @@
+{
+  "name": "hear-my-book-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node duration.test.mjs && node run.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}
