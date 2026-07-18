@@ -5,7 +5,7 @@
   # pull the audio/slides referenced by catalog.json out of GitHub Releases so
   # Netlify serves them itself — iOS Safari refuses GitHub's forced
   # application/octet-stream downloads in an <audio> element
-  command = "node tools/fetch-media.mjs"
+  command = "node tools/fetch-media.mjs && node tools/build-feeds.mjs"
 
 # canonical host: apex; www redirects
 [[redirects]]
@@ -49,4 +49,10 @@
 [[headers]]
   for = "/media/*"
   [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/feed-*.xml"
+  [headers.values]
+    Content-Type = "application/rss+xml; charset=utf-8"
     Cache-Control = "public, max-age=3600"
