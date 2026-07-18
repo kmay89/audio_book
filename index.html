@@ -303,6 +303,32 @@ h1{font-size:1.6rem;margin:.4rem 0 .2rem}
 .sv-card a{display:inline-block;margin-top:.7rem;border:1px solid var(--accent-bright);color:var(--accent-bright);
   border-radius:999px;padding:.45rem 1.3rem;font-size:.9rem;font-weight:600}
 .np-stage.has-sv{touch-action:auto}
+.sv-slide img{cursor:zoom-in}
+.sv-expand{position:absolute;top:.55rem;right:.55rem;width:2.1rem;height:2.1rem;border-radius:50%;
+  background:rgba(28,28,32,.55);color:#fff;display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.sv-expand svg{width:1rem;height:1rem;fill:currentColor}
+/* fullscreen slide lightbox — iOS Photos feel: black stage, floating chrome */
+#lb{position:fixed;inset:0;z-index:90;background:#000;display:none;touch-action:none;
+  -webkit-user-select:none;user-select:none;overscroll-behavior:contain}
+#lb.open{display:block}
+html.lb-lock, html.lb-lock body{overflow:hidden}
+#lb .lb-stage{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#lb .lb-stage img{max-width:100%;max-height:100%;will-change:transform;-webkit-user-drag:none}
+#lb .lb-top{position:absolute;top:calc(.6rem + env(safe-area-inset-top));left:0;right:0;z-index:2;
+  display:flex;justify-content:space-between;align-items:center;padding:0 .8rem;pointer-events:none}
+#lb .lb-count{background:rgba(30,30,34,.72);color:#eee;border-radius:999px;padding:.32rem .85rem;
+  font-size:.82rem;font-variant-numeric:tabular-nums;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#lb .lb-count:empty{visibility:hidden}
+#lb .lb-close{pointer-events:auto;width:2.4rem;height:2.4rem;border-radius:50%;font-size:1.05rem;
+  background:rgba(30,30,34,.72);color:#eee;display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#lb .lb-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:2.6rem;height:2.6rem;
+  border-radius:50%;background:rgba(30,30,34,.72);color:#eee;display:flex;align-items:center;justify-content:center}
+#lb .lb-nav svg{width:1.15rem;height:1.15rem;fill:currentColor}
+#lb .lb-nav[disabled]{opacity:.3;pointer-events:none}
+#lb .lb-prev{left:.7rem}#lb .lb-next{right:.7rem}
+@media(pointer:coarse){#lb .lb-nav{display:none}}
 .np-doc{font-family:var(--serif);font-size:1.02rem;line-height:1.7;padding:.4rem 0 1.5rem;white-space:normal}
 .np-doc h2,.np-doc h3{font-family:var(--serif);margin:1.4rem 0 .5rem}
 .np-doc p{margin:0 0 .9rem}
@@ -571,6 +597,17 @@ footer .spectral{margin-bottom:.8rem}
     <h2><span id="slides-title">Slides</span><button id="slides-close" aria-label="Close">✕</button></h2>
     <div id="slides-body"></div>
   </div>
+</div>
+
+<!-- fullscreen slide lightbox: pinch to zoom, swipe to page, pull down to close -->
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slides full screen">
+  <div class="lb-top">
+    <span class="lb-count" aria-live="polite"></span>
+    <button class="lb-close" aria-label="Close full screen">✕</button>
+  </div>
+  <div class="lb-stage"><img alt="" draggable="false"></div>
+  <button class="lb-nav lb-prev" aria-label="Previous slide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 4.5 8 12l7.5 7.5 1.4-1.4L10.8 12l6.1-6.1z"/></svg></button>
+  <button class="lb-nav lb-next" aria-label="Next slide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 4.5 16 12l-7.5 7.5-1.4-1.4L13.2 12 7.1 5.9z"/></svg></button>
 </div>
 
 <div id="toast" role="status" aria-live="polite"></div>
@@ -1152,6 +1189,130 @@ function toggleMenu(m){ const was = m.classList.contains('open'); closeMenus(); 
 function closeMenus(){ document.querySelectorAll('.menu').forEach(m => m.classList.remove('open')); }
 document.addEventListener('click', e => { if (!e.target.closest('.menu')) closeMenus(); });
 
+// ---------- fullscreen slide lightbox ----------
+// Gesture model (iOS Photos): pinch zooms about the pinch point; while
+// zoomed one finger pans; at 1x a horizontal swipe pages and a pull-down
+// closes; double-tap toggles zoom. touch-action:none keeps the browser's
+// own page zoom and scroll out of it, so nothing navigates by accident.
+const lb = $('#lb'), lbStage = $('#lb .lb-stage'), lbImg = $('#lb .lb-stage img'),
+      lbCount = $('#lb .lb-count'), lbPrev = $('#lb .lb-prev'), lbNext = $('#lb .lb-next');
+let lbImgs = [], lbIdx = 0, lbTitle = '', lbS = 1, lbTx = 0, lbTy = 0, lbReturn = null;
+const lbPts = new Map();
+let lbPinch = null, lbDrag = null, lbLastTap = 0, lbTapAt = [0, 0];
+
+function lbApply(anim){
+  lbImg.style.transition = anim && !matchMedia('(prefers-reduced-motion:reduce)').matches
+    ? 'transform .28s cubic-bezier(.2,.7,.3,1)' : 'none';
+  lbImg.style.transform = `translate(${lbTx}px, ${lbTy}px) scale(${lbS})`;
+}
+function lbClampPan(){
+  const mx = Math.max(0, (lbImg.offsetWidth * lbS - lbStage.clientWidth) / 2);
+  const my = Math.max(0, (lbImg.offsetHeight * lbS - lbStage.clientHeight) / 2);
+  lbTx = Math.min(mx, Math.max(-mx, lbTx));
+  lbTy = Math.min(my, Math.max(-my, lbTy));
+}
+function lbShow(i){
+  lbIdx = Math.max(0, Math.min(lbImgs.length - 1, i));
+  lbS = 1; lbTx = 0; lbTy = 0;
+  lbImg.src = lbImgs[lbIdx];
+  lbImg.alt = `${lbTitle} — slide ${lbIdx + 1} of ${lbImgs.length}`;
+  lbCount.textContent = lbImgs.length > 1 ? `${lbIdx + 1} of ${lbImgs.length}` : '';
+  lbPrev.disabled = lbIdx === 0; lbNext.disabled = lbIdx === lbImgs.length - 1;
+  lbApply(false);
+  for (const j of [lbIdx - 1, lbIdx + 1])
+    if (lbImgs[j]){ const p = new Image(); p.src = lbImgs[j]; }
+}
+function openLightbox(imgs, i, title){
+  lbImgs = imgs; lbTitle = title; lbReturn = document.activeElement;
+  lb.classList.add('open'); document.documentElement.classList.add('lb-lock');
+  lbShow(i);
+  $('#lb .lb-close').focus({preventScroll: true});
+}
+function lbClose(){
+  lb.classList.remove('open'); document.documentElement.classList.remove('lb-lock');
+  lbPts.clear(); lbPinch = lbDrag = null;
+  if (lbReturn && lbReturn.isConnected) lbReturn.focus({preventScroll: true});
+}
+function lbZoomAt(x, y){
+  const r = lbStage.getBoundingClientRect();
+  const px = x - r.left - r.width / 2, py = y - r.top - r.height / 2;
+  if (lbS > 1){ lbS = 1; lbTx = 0; lbTy = 0; }
+  else { lbS = 2.5; lbTx = -px * 1.5; lbTy = -py * 1.5; lbClampPan(); }
+  lbApply(true);
+}
+lbStage.addEventListener('pointerdown', e => {
+  lbStage.setPointerCapture(e.pointerId);
+  lbPts.set(e.pointerId, {x: e.clientX, y: e.clientY});
+  if (lbPts.size === 2){
+    const [a, b] = [...lbPts.values()];
+    lbPinch = {d: Math.hypot(a.x - b.x, a.y - b.y), s: lbS,
+      cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2, tx: lbTx, ty: lbTy};
+    lbDrag = null;
+  } else if (lbPts.size === 1){
+    lbDrag = {x: e.clientX, y: e.clientY, tx: lbTx, ty: lbTy, moved: false};
+  }
+});
+lbStage.addEventListener('pointermove', e => {
+  if (!lbPts.has(e.pointerId)) return;
+  lbPts.set(e.pointerId, {x: e.clientX, y: e.clientY});
+  if (lbPinch && lbPts.size >= 2){
+    const [a, b] = [...lbPts.values()];
+    const ns = Math.min(5, Math.max(1, lbPinch.s * Math.hypot(a.x - b.x, a.y - b.y) / lbPinch.d));
+    const r = lbStage.getBoundingClientRect();
+    const px = lbPinch.cx - r.left - r.width / 2, py = lbPinch.cy - r.top - r.height / 2;
+    lbTx = px - (px - lbPinch.tx) * ns / lbPinch.s;
+    lbTy = py - (py - lbPinch.ty) * ns / lbPinch.s;
+    lbS = ns; lbClampPan(); lbApply(false);
+  } else if (lbDrag){
+    const dx = e.clientX - lbDrag.x, dy = e.clientY - lbDrag.y;
+    if (Math.hypot(dx, dy) > 6) lbDrag.moved = true;
+    if (lbS > 1){ lbTx = lbDrag.tx + dx; lbTy = lbDrag.ty + dy; lbClampPan(); }
+    else { lbTx = dx; lbTy = Math.max(0, dy); } // page-swipe / pull-down feedback
+    lbApply(false);
+  }
+});
+function lbPointerEnd(e){
+  if (!lbPts.has(e.pointerId)) return;
+  lbPts.delete(e.pointerId);
+  if (lbPinch){
+    if (lbPts.size < 2){
+      lbPinch = null; lbDrag = null;
+      if (lbS < 1.05){ lbS = 1; lbTx = 0; lbTy = 0; lbApply(true); }
+    }
+    return;
+  }
+  if (!lbDrag) return;
+  const dx = lbTx - (lbS > 1 ? lbDrag.tx : 0), dy = lbTy - (lbS > 1 ? lbDrag.ty : 0);
+  if (!lbDrag.moved){
+    const now = Date.now();
+    if (now - lbLastTap < 300 && Math.hypot(e.clientX - lbTapAt[0], e.clientY - lbTapAt[1]) < 30){
+      lbLastTap = 0; lbZoomAt(e.clientX, e.clientY);
+    } else {
+      lbLastTap = now; lbTapAt = [e.clientX, e.clientY];
+      if (lbS === 1){ lbTx = 0; lbTy = 0; lbApply(false); }
+    }
+  } else if (lbS === 1){
+    if (dy > 90 && dy > Math.abs(dx)){ lbDrag = null; return lbClose(); }
+    if (dx < -50 && lbIdx < lbImgs.length - 1) lbShow(lbIdx + 1);
+    else if (dx > 50 && lbIdx > 0) lbShow(lbIdx - 1);
+    else { lbTx = 0; lbTy = 0; lbApply(true); }
+  }
+  lbDrag = null;
+}
+lbStage.addEventListener('pointerup', lbPointerEnd);
+lbStage.addEventListener('pointercancel', lbPointerEnd);
+// Safari's page-level pinch gesture must never fire inside the lightbox
+lb.addEventListener('gesturestart', e => e.preventDefault());
+$('#lb .lb-close').addEventListener('click', lbClose);
+lbPrev.addEventListener('click', () => lbShow(lbIdx - 1));
+lbNext.addEventListener('click', () => lbShow(lbIdx + 1));
+document.addEventListener('keydown', e => {
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape'){ e.stopPropagation(); lbClose(); }
+  else if (e.key === 'ArrowRight'){ e.stopPropagation(); if (lbIdx < lbImgs.length - 1) lbShow(lbIdx + 1); }
+  else if (e.key === 'ArrowLeft'){ e.stopPropagation(); if (lbIdx > 0) lbShow(lbIdx - 1); }
+}, {capture: true});
+
 // slides — one viewer shared by the Slides overlay and the drawer tab:
 // page images become a swipeable pager; a not-yet-converted PDF deck is
 // embedded where the browser has a viewer, else offered as a new-tab card
@@ -1163,16 +1324,24 @@ function buildSlideViewer(slides, title){
     host.setAttribute('role', 'group');
     host.setAttribute('aria-roledescription', 'carousel');
     host.setAttribute('aria-label', title + ' slides');
+    const urls = imgs.map(s => safeUrl(s.url));
+    let pageAt = () => 0;
     const track = document.createElement('div'); track.className = 'sv-track';
     imgs.forEach((s, i) => {
       const fig = document.createElement('figure'); fig.className = 'sv-slide';
       const img = document.createElement('img');
       if (i) img.loading = 'lazy';
-      img.src = safeUrl(s.url);
+      img.src = urls[i];
       img.alt = `${title} — slide ${i + 1} of ${imgs.length}`;
+      img.addEventListener('click', () => openLightbox(urls, i, title));
       fig.appendChild(img); track.appendChild(fig);
     });
     host.appendChild(track);
+    const ex = document.createElement('button'); ex.className = 'sv-expand';
+    ex.setAttribute('aria-label', 'View slides full screen');
+    ex.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v2H6v4H4zm10 0h6v6h-2V6h-4zM4 14h2v4h4v2H4zm14 0h2v6h-6v-2h4z"/></svg>';
+    ex.addEventListener('click', () => openLightbox(urls, pageAt(), title));
+    host.appendChild(ex);
     if (imgs.length > 1){
       const mk = (cls, label, d) => {
         const b = document.createElement('button');
@@ -1186,6 +1355,7 @@ function buildSlideViewer(slides, title){
       count.setAttribute('aria-live', 'polite');
       const at = () => Math.max(0, Math.min(imgs.length - 1,
         Math.round(track.scrollLeft / Math.max(1, track.clientWidth))));
+      pageAt = at;
       const update = () => {
         count.textContent = `${at() + 1} of ${imgs.length}`;
         prev.disabled = at() === 0; next.disabled = at() === imgs.length - 1;

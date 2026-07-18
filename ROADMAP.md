@@ -53,6 +53,10 @@ change checklist in `GETTING-STARTED.md`.
 
 ## Shipped (newest first)
 
+- Fullscreen slide lightbox: tap a slide (or the expand chip) for an
+  iOS-Photos-style view — pinch to zoom about the pinch point, one-finger
+  pan while zoomed, swipe to page at 1x, pull down or Esc to close,
+  double-tap zoom; portrait-first, audio uninterrupted
 - Embedded slides viewer: PDF decks are auto-rasterized to per-page images
   in CI and shown as a swipeable pager (counter, arrows, deck download) in
   the drawer's Slides tab and the Slides overlay
