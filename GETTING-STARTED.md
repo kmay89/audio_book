@@ -70,15 +70,18 @@ run the sync — the chapter reverts to "text only".
 ### Import straight from a share link (songs, generated audio)
 
 For tools that give you a share page instead of a file (AI song generators
-etc.): Actions → **Import from share link** → paste the URL, pick the book
-and a slug (a chapter slug, or a new slug like `song-first-light` for an
-extra). Leave **publish** unchecked first — the dry run reports every audio
-URL the page serves with its real size and content type (that's how you check
-whether the share stream matches download quality). Re-run with **publish**
-checked and it uploads the biggest audio + the page artwork (as `__slide-01`)
-to the release, transcodes, and syncs — live in one go. If a page loads audio
-only through authenticated APIs, the report says so; fall back to the tool's
-own Download button and the normal upload.
+etc.): Actions → **Import from share link** → paste **one or more** share
+URLs (space-separated) — or a **profile/listing page**, whose `/song/` links
+are expanded automatically — and pick the destination book (the `songs`
+album exists for music). Slugs derive from each song's title; already-imported
+songs are skipped, so reruns are safe. Leave **publish** unchecked first —
+the dry run reports every audio URL each page serves with its real size and
+content type (that's how you check whether the share stream matches download
+quality). Re-run with **publish** checked and it uploads the biggest audio +
+each page's artwork (as `__slide-01`) to the release (creating the release if
+needed), transcodes, and syncs — live in one go. If a page loads audio only
+through authenticated APIs, the report says so; fall back to the tool's own
+Download button and the normal upload.
 Mind the generator's terms for rights over generated audio before publishing
 publicly.
 

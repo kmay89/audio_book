@@ -4,14 +4,15 @@ on:
   workflow_dispatch:
     inputs:
       url:
-        description: "Share page URL (e.g. https://…/song/abc123)"
+        description: "One or more share URLs (space-separated), or a profile/listing page — its /song/ links are expanded automatically"
         required: true
       book:
-        description: "Book slug from catalog.json (e.g. glows)"
+        description: "Book slug from catalog.json (e.g. songs)"
         required: true
       slug:
-        description: "Chapter slug (ch-…) or a new extra slug (e.g. song-first-light)"
-        required: true
+        description: "Optional slug override (single URL only) — otherwise slugs derive from song titles"
+        required: false
+        default: ""
       publish:
         description: "Actually upload + sync (leave unchecked for a dry-run report)"
         type: boolean
@@ -35,7 +36,7 @@ jobs:
           node tools/import-share.mjs \
             --url "${{ inputs.url }}" \
             --book "${{ inputs.book }}" \
-            --slug "${{ inputs.slug }}" \
+            ${{ inputs.slug != '' && format('--slug "{0}"', inputs.slug) || '' }} \
             ${{ inputs.publish && ' ' || '--dry-run' }}
       - name: Install ffmpeg
         if: ${{ inputs.publish }}

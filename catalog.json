@@ -583,6 +583,22 @@
       "description": "The fifth book is being written. Audio previews will appear here first.",
       "epubUrl": null,
       "coverUrl": null
+    },
+    {
+      "slug": "songs",
+      "title": "Songs",
+      "tagline": "Music from the Everything universe",
+      "author": "Karl Meves",
+      "description": "Original songs made alongside the books — an evolving songbook. Titles and framing are easy to change later.",
+      "order": 6,
+      "accent": "#5b2a4e",
+      "accentBright": "#8d4a7c",
+      "coverUrl": null,
+      "readUrl": null,
+      "epubUrl": null,
+      "releaseTag": "media-songs",
+      "extras": [],
+      "chapters": []
     }
   ],
   "series": {
