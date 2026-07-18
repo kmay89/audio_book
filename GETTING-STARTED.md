@@ -54,6 +54,24 @@ Two ideas to hold on to:
 5. **Wait ~2–4 minutes**, then check the site: the chapter shows its real
    duration and plays. Done.
 
+**Bulk upload from the command line** (best for a whole book — browser
+drag-and-drop gets fragile past a few hundred MB): name your files by
+chapter **number** (`1.m4a`, `02 deck.pdf`, `5 infographic.png` …), then let
+the repo rename and upload them:
+
+```sh
+git clone https://github.com/kmay89/audio_book && cd audio_book
+node tools/rename-batch.mjs grows ~/Desktop/grows-files --dry-run   # preview
+node tools/rename-batch.mjs grows ~/Desktop/grows-files             # rename
+cd ~/Desktop/grows-files
+gh release upload media-grows * --repo kmay89/audio_book --clobber  # upload
+gh workflow run sync-catalog.yml --repo kmay89/audio_book           # publish
+```
+
+(`gh` is the GitHub CLI — `brew install gh`, then `gh auth login` once.
+Never commit media into git; releases are the storage, `gh release upload`
+is the truck. `--clobber` overwrites same-name assets.)
+
 **Companions** ride in the same drag-and-drop, matched by filename:
 
 | upload | becomes |
