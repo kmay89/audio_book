@@ -50,8 +50,9 @@ Docs: `GETTING-STARTED.md` (step-by-step + watch-outs — **read it first**),
   feed GUIDs). Don't rename them; don't change the GUID scheme
   (`hear-my-book:<book>/<slug>`).
 - **Listener data is sacred**: `ab-*` localStorage keys; positions per
-  chapter; `ended` clears position + marks done; restore merges positions by
-  furthest point. Audio must keep playing across all in-app navigation.
+  chapter; `ended` clears position + marks done + counts a lap (`ab-laps`);
+  restore merges positions by furthest point and laps by highest. Audio must
+  keep playing across all in-app navigation.
 - **Served code is dependency-free** and CSP-locked (`netlify.toml`); no
   external scripts, no CDNs. Media/img allowances are deliberate.
 - `media-<slug>` release **tags** are pipeline addresses — assets change

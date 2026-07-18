@@ -623,7 +623,10 @@ const LS = {
   set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} },
   del(k){ try{ localStorage.removeItem(k); }catch(e){} },
 };
-const posKey = t => 'ab-pos:' + t.key, doneKey = t => 'ab-done:' + t.key;
+const posKey = t => 'ab-pos:' + t.key, doneKey = t => 'ab-done:' + t.key,
+      lapsKey = t => 'ab-laps:' + t.key;
+// completed play-throughs; chapters finished before laps existed count as 1
+const laps = t => +LS.get(lapsKey(t), 0) || (LS.get(doneKey(t)) ? 1 : 0);
 
 let CAT = null;          // catalog
 let TRACKS = [];         // flat list of playable tracks in catalog order
@@ -774,16 +777,18 @@ function renderJourney(){
 }
 
 function rowHTML(it){
-  const done = !!LS.get(doneKey(it));
+  const lp = laps(it);
+  const done = lp > 0;
   const pos = +LS.get(posKey(it), 0);
   const dur = it.audio ? it.audio.duration : 0;
-  const partway = it.audio && pos > 20 && !done && dur;
+  // a fresh lap on a finished chapter shows its own progress beside the tick
+  const partway = it.audio && pos > 20 && dur;
   const readHref = it.book.readUrl ? safeUrl(it.book.readUrl) + '#' + it.slug : '#';
   let sub = '';
   if (it.audio){
     sub = `<span class="dur">${fmt(dur)}</span>`;
     if (partway) sub += `<span class="minibar" aria-hidden="true"><i style="width:${Math.min(99, Math.round(100*pos/dur))}%"></i></span><span>${fmt(dur - pos)} left</span>`;
-    if (done) sub += `<span class="done-tick">✓ finished</span>`;
+    if (done) sub += `<span class="done-tick" ${lp > 1 ? `title="Listened ${lp} times"` : ''}>✓ ${lp > 1 ? '×' + lp : 'finished'}</span>`;
     if (it.slides && it.slides.length) sub += `<span>· has slides</span>`;
   } else {
     sub = it.book.readUrl ? `<span>text only for now</span>` : `<span>coming soon</span>`;
@@ -1031,6 +1036,7 @@ audio.addEventListener('seeked', () => { saveProgress(true); updatePositionState
 audio.addEventListener('ratechange', updatePositionState);
 audio.addEventListener('ended', () => {
   if (!cur) return;
+  LS.set(lapsKey(cur), String(laps(cur) + 1));
   LS.set(doneKey(cur), '1');
   LS.del(posKey(cur));
   setPlayIcon(false);
@@ -1468,7 +1474,7 @@ function renderNPStage(){
       row.className = 'nrow' + (it === cur ? ' now' : '');
       row.innerHTML = `<span class="n">${it.kind === 'chapter' ? it.n : '·'}</span>
         <span class="t2">${esc(it.title)}</span>
-        <span class="d">${it === cur ? 'now playing' : (LS.get(doneKey(it)) ? '✓' : fmt(it.audio.duration))}</span>`;
+        <span class="d">${it === cur ? 'now playing' : (laps(it) ? (laps(it) > 1 ? '✓×' + laps(it) : '✓') : fmt(it.audio.duration))}</span>`;
       row.addEventListener('click', () => { if (it !== cur) playTrack(it); });
       host.appendChild(row);
     }
@@ -1785,7 +1791,9 @@ function abKeys(){
 async function updateDataStatus(){
   const keys = abKeys();
   const inProgress = Object.keys(keys).filter(k => k.startsWith('ab-pos:')).length;
-  const done = Object.keys(keys).filter(k => k.startsWith('ab-done:')).length;
+  const doneKeys = Object.keys(keys).filter(k => k.startsWith('ab-done:'));
+  const done = doneKeys.length;
+  const listens = doneKeys.reduce((s, k) => s + (+keys['ab-laps:' + k.slice('ab-done:'.length)] || 1), 0);
   const flags = getFlags().length;
   let persisted = '';
   try {
@@ -1794,7 +1802,7 @@ async function updateDataStatus(){
   } catch(e){}
   const bits = [];
   if (inProgress) bits.push(`${inProgress} chapter${inProgress === 1 ? '' : 's'} in progress`);
-  if (done) bits.push(`${done} finished`);
+  if (done) bits.push(`${done} finished${listens > done ? ` · ${listens} listens` : ''}`);
   if (flags) bits.push(`${flags} flag${flags === 1 ? '' : 's'}`);
   $('#data-status').textContent = (bits.length ? `Saved here: ${bits.join(' · ')}` : 'Nothing saved yet — press play and your place starts being remembered.') + persisted;
 }
@@ -1824,8 +1832,9 @@ $('#import-file').addEventListener('change', async e => {
     let n = 0;
     for (const [k, v] of Object.entries(payload.data)){
       if (!k.startsWith('ab-') || typeof v !== 'string') continue;
-      // merge positions by keeping the furthest point; everything else restores
-      if (k.startsWith('ab-pos:')){
+      // merge positions by furthest point and lap counts by highest —
+      // a restore can only ever add, never subtract
+      if (k.startsWith('ab-pos:') || k.startsWith('ab-laps:')){
         const existing = +LS.get(k, 0);
         LS.set(k, String(Math.max(existing, +v || 0)));
       } else LS.set(k, v);

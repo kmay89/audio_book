@@ -334,6 +334,28 @@ await page.evaluate(() => { const a = document.querySelector('#player'); a.curre
 await page.waitForFunction(() => document.querySelector('#pb-title').textContent === 'Everything That Remembers', null, {timeout: 10000});
 ok(true, 'auto-advances to next chapter on end');
 ok(await page.evaluate(() => localStorage.getItem('ab-done:glows/ch-glows')) === '1', 'finished chapter marked done');
+ok(await page.evaluate(() => localStorage.getItem('ab-laps:glows/ch-glows')) === '1', 'first completion counts lap 1');
+
+// 9a. lap two: relisten without losing the finished mark
+await page.locator('#bk-chapters .row [data-act="play"]').first().click();
+await page.waitForFunction(() => document.querySelector('#pb-title').textContent === 'Everything That Glows', null, {timeout: 8000});
+ok(await page.evaluate(() => document.querySelector('#player').currentTime < 2), 'relisten starts from the top');
+await page.waitForFunction(() => document.querySelector('#player').currentTime > 0.5, null, {timeout: 8000});
+await page.evaluate(() => { const a = document.querySelector('#player'); a.currentTime = a.duration - 0.4; });
+await page.waitForFunction(() => document.querySelector('#pb-title').textContent === 'Everything That Remembers', null, {timeout: 10000});
+ok(await page.evaluate(() => localStorage.getItem('ab-laps:glows/ch-glows')) === '2', 'second listen counts lap 2');
+ok(await page.evaluate(() => localStorage.getItem('ab-done:glows/ch-glows')) === '1', 'done mark survives relistening');
+ok((await page.locator('#bk-chapters .row .done-tick').first().textContent()).includes('×2'), 'row shows the lap count');
+// lap counts merge by max on restore — higher import wins, lower never subtracts
+await page.locator('#import-file').setInputFiles({name: 'laps9.json', mimeType: 'application/json',
+  buffer: Buffer.from(JSON.stringify({app: 'hear-my-book', schemaVersion: 1, data: {'ab-laps:glows/ch-glows': '9'}}))});
+await page.waitForFunction(() => localStorage.getItem('ab-laps:glows/ch-glows') === '9', null, {timeout: 5000});
+ok(true, 'restore raises the lap count to the higher backup');
+await page.locator('#import-file').setInputFiles({name: 'laps1.json', mimeType: 'application/json',
+  buffer: Buffer.from(JSON.stringify({app: 'hear-my-book', schemaVersion: 1, data: {'ab-laps:glows/ch-glows': '1', 'ab-probe': 'x'}}))});
+await page.waitForFunction(() => localStorage.getItem('ab-probe') === 'x', null, {timeout: 5000});
+ok(await page.evaluate(() => localStorage.getItem('ab-laps:glows/ch-glows')) === '9', 'restore never lowers a lap count');
+await page.evaluate(() => localStorage.removeItem('ab-probe'));
 
 // 9b. journey card appears on the library page once progress exists
 await page.goto(BASE);
