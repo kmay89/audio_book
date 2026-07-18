@@ -1472,9 +1472,10 @@ function renderNPStage(){
     for (const it of [...(cur.book.extras || []), ...cur.book.chapters].filter(x => x.audio)){
       const row = document.createElement('button');
       row.className = 'nrow' + (it === cur ? ' now' : '');
+      const lp = laps(it);
       row.innerHTML = `<span class="n">${it.kind === 'chapter' ? it.n : '·'}</span>
         <span class="t2">${esc(it.title)}</span>
-        <span class="d">${it === cur ? 'now playing' : (laps(it) ? (laps(it) > 1 ? '✓×' + laps(it) : '✓') : fmt(it.audio.duration))}</span>`;
+        <span class="d">${it === cur ? 'now playing' : (lp ? (lp > 1 ? '✓×' + lp : '✓') : fmt(it.audio.duration))}</span>`;
       row.addEventListener('click', () => { if (it !== cur) playTrack(it); });
       host.appendChild(row);
     }
