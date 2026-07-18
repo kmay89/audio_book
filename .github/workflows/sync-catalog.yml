@@ -1,0 +1,39 @@
+name: Sync catalog from releases
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published, edited, released]
+  schedule:
+    - cron: "17 5 * * *" # daily backstop, since asset uploads alone don't fire events
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-catalog
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Sync catalog.json against media releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node tools/sync.mjs
+      - name: Commit if changed
+        run: |
+          if git diff --quiet catalog.json; then
+            echo "No catalog changes."
+            exit 0
+          fi
+          git config user.name "catalog-sync"
+          git config user.email "actions@github.com"
+          git add catalog.json
+          git commit -m "Sync catalog from media releases"
+          git push
