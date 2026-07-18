@@ -1,7 +1,14 @@
-# Netlify deploy for the Everything audio player — static root, no build.
+# Netlify deploy for hear-my-book.com (The Everything Library) — static root, no build.
 
 [build]
   publish = "."
+
+# canonical host: apex; www redirects
+[[redirects]]
+  from = "https://www.hear-my-book.com/*"
+  to = "https://hear-my-book.com/:splat"
+  status = 301
+  force = true
 
 [[headers]]
   for = "/*"
