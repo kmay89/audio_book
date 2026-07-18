@@ -173,6 +173,28 @@ The `media/…` path exists precisely for that (see watch-outs).
 
 ---
 
+## Making changes — the continuous-improvement loop
+
+Ideas live in **`ROADMAP.md`** (candidates with rationale, rejected ideas
+with reasons, shipped history). When building anything, the loop is:
+
+1. **Pick or add a roadmap item** — one line of rationale is enough. Check
+   the *Rejected* list first so settled questions aren't reopened.
+2. **Branch and build** within the invariants (`CLAUDE.md` lists them; the
+   watch-outs above are the long form).
+3. **Extend the tests.** New behavior gets assertions in `tests/run.mjs` —
+   the suite is the product's contract, not an afterthought.
+4. **Update the docs you just made stale**: this file if the workflow
+   changed, `PUBLISHING.md` if the pipeline changed, `ROADMAP.md` always
+   (move the item to Shipped).
+5. **Bump `sw.js` `CACHE`** if the player changed.
+6. **PR with CI green → merge** → Netlify deploys automatically.
+7. **Verify once on a real device** — the iOS lessons in this repo's history
+   were all invisible in desktop testing.
+
+**Definition of done = code + tests + docs.** A change without the last two
+isn't finished.
+
 ## Verifying your changes
 
 ```sh
