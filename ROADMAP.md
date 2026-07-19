@@ -53,6 +53,11 @@ change checklist in `GETTING-STARTED.md`.
 
 ## Shipped (newest first)
 
+- First-visit "Add to Home Screen" nudge: one gentle, dismissible sheet on
+  mobile (Apple = Share→Add steps; Android/Chrome = one-tap Install via
+  `beforeinstallprompt`), delayed so it never lands on arrival, shown once
+  (`ab-a2hs`), with a reassuring line about quiet auto-updates and
+  on-device data
 - Listening laps: finishing a chapter counts a play-through (`ab-laps`);
   relistening starts fresh while the ✓ stays, rows show "✓ ×N", the data
   panel totals listens, and restore merges lap counts by max — no streaks,
