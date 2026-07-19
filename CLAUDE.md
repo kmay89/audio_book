@@ -19,8 +19,9 @@ Docs: `GETTING-STARTED.md` (step-by-step + watch-outs — **read it first**),
 
 - `index.html` — the entire app: shelf (Apple Books-style covers), book view,
   mini player, Now Playing drawer (Art/Up Next/Slides/Outline/Text/Flags
-  tabs), Aa panel (theme, text size, backup/restore), in-app legal pages.
-  One file, inline CSS+JS, theme-aware, `data-os` platform hint.
+  tabs), Aa panel (theme, text size, backup/restore), a one-time mobile
+  "Add to Home Screen" nudge (`ab-a2hs`), in-app legal pages. One file,
+  inline CSS+JS, theme-aware, `data-os` platform hint.
 - `catalog.json` — source of truth for books/chapters/metadata. Machine-owned
   blocks (`audio`, `slides`, `text`, `outlineFromAsset`) are written by the
   sync; everything else is human-owned. Ownership table in GETTING-STARTED.

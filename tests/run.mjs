@@ -390,6 +390,26 @@ await page2.keyboard.press(' ');
 await page2.waitForFunction(() => !document.querySelector('#player').paused, null, {timeout: 8000});
 ok(true, 'space starts playback');
 
+// 12. first-visit add-to-home-screen nudge: mobile only, once, dismissible
+const ctxM = await browser.newContext({userAgent:
+  'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'});
+const pageM = await ctxM.newPage();
+await pageM.goto(`http://localhost:${PORT}/index.html?catalog=catalog.test.json`);
+await pageM.waitForSelector('#a2hs.show', {timeout: 9000});
+ok((await pageM.locator('#a2hs-how').textContent()).includes('Add to Home Screen'), 'iOS install steps shown');
+ok(await pageM.locator('#a2hs-install').isHidden(), 'no one-tap install button on iOS (Safari has no prompt)');
+ok((await pageM.locator('#a2hs .a2hs-note').textContent()).includes('up to date'), 'nudge reassures about auto-update + on-device data');
+await pageM.locator('#a2hs-dismiss').click();
+await pageM.waitForFunction(() => localStorage.getItem('ab-a2hs') === 'dismissed', null, {timeout: 3000});
+ok(true, 'dismiss is remembered');
+await pageM.reload();
+await pageM.waitForSelector('#booklist .cover', {timeout: 8000});
+await pageM.waitForTimeout(600);
+ok(await pageM.evaluate(() => { const e = document.querySelector('#a2hs'); return e.hidden && !e.classList.contains('show'); }), 'nudge stays gone after dismissal');
+// a desktop-class visitor is never nudged (home screen doesn't apply)
+ok(await page.locator('#a2hs').isHidden(), 'no nudge on desktop-class platform');
+await pageM.close(); await ctxM.close();
+
 ok(errors.length === 0, 'no page errors' + (errors.length ? ' — ' + errors.join(' | ') : ''));
 
 await browser.close();

@@ -404,6 +404,33 @@ html.lb-lock, html.lb-lock body{overflow:hidden}
   opacity:0;pointer-events:none;transition:opacity .25s;max-width:90vw;text-align:center}
 #toast.show{opacity:.96}
 
+/* first-visit add-to-home-screen nudge: one gentle, dismissible sheet */
+#a2hs{position:fixed;left:50%;bottom:calc(.85rem + env(safe-area-inset-bottom));
+  transform:translateX(-50%) translateY(150%);z-index:50;
+  width:min(30rem,calc(100vw - 1.4rem));background:var(--paper);border:1px solid var(--rule);
+  border-radius:18px;box-shadow:0 14px 44px rgba(0,0,0,.24);padding:1rem 1.05rem .85rem;opacity:0;
+  transition:transform .4s cubic-bezier(.2,.7,.3,1),opacity .3s}
+#a2hs.show{transform:translateX(-50%) translateY(0);opacity:1}
+#a2hs.lift{bottom:calc(7rem + env(safe-area-inset-bottom))} /* sit above the mini player */
+@media(prefers-reduced-motion:reduce){#a2hs{transition:opacity .2s}#a2hs.show{transform:translateX(-50%)}}
+.a2hs-x{position:absolute;top:.45rem;right:.5rem;width:1.9rem;height:1.9rem;border-radius:50%;
+  color:var(--faint);font-size:.9rem;display:flex;align-items:center;justify-content:center}
+.a2hs-body{display:flex;gap:.8rem;align-items:flex-start;padding-right:1.1rem}
+.a2hs-icon img{border-radius:10px;display:block}
+.a2hs-copy{min-width:0}
+.a2hs-t{font-family:var(--serif);font-weight:700;font-size:1rem;margin:0 0 .2rem}
+.a2hs-s{font-size:.86rem;color:var(--muted);margin:0 0 .35rem;line-height:1.45}
+.a2hs-s b{color:var(--ink);font-weight:600}
+.a2hs-s .sh{display:inline-flex;vertical-align:-.2em;margin:0 .08em}
+.a2hs-s .sh svg{width:1.05em;height:1.05em;fill:var(--accent-bright)}
+.a2hs-note{font-size:.77rem;color:var(--faint);margin:0;line-height:1.4}
+.a2hs-actions{display:flex;justify-content:flex-end;gap:.5rem;margin-top:.7rem}
+.a2hs-actions button{border-radius:999px;padding:.42rem 1.05rem;font-size:.85rem;font-weight:600}
+#a2hs-install{background:var(--accent);color:#fff}
+@media(prefers-color-scheme:dark){#a2hs-install{color:#16161a}}
+.a2hs-later{border:1px solid var(--rule);color:var(--muted)}
+.a2hs-later:hover{border-color:var(--accent-bright);color:var(--accent-bright)}
+
 footer{max-width:var(--measure);margin:2.5rem auto 0;padding:0 1rem;color:var(--faint);font-size:.78rem}
 footer .spectral{margin-bottom:.8rem}
 .ftr-links{margin-bottom:.5rem}
@@ -608,6 +635,23 @@ footer .spectral{margin-bottom:.8rem}
   <div class="lb-stage"><img alt="" draggable="false"></div>
   <button class="lb-nav lb-prev" aria-label="Previous slide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 4.5 8 12l7.5 7.5 1.4-1.4L10.8 12l6.1-6.1z"/></svg></button>
   <button class="lb-nav lb-next" aria-label="Next slide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 4.5 16 12l-7.5 7.5-1.4-1.4L13.2 12 7.1 5.9z"/></svg></button>
+</div>
+
+<div id="a2hs" role="region" aria-label="Add to Home Screen" hidden>
+  <button class="a2hs-x" id="a2hs-x" aria-label="Dismiss">✕</button>
+  <div class="a2hs-body">
+    <span class="a2hs-icon"><img src="icon-192.png" alt="" width="44" height="44"></span>
+    <div class="a2hs-copy">
+      <p class="a2hs-t">Keep the library one tap away</p>
+      <p class="a2hs-s" id="a2hs-how"></p>
+      <p class="a2hs-note">It keeps itself up to date automatically, and your place, flags, and
+        notes stay saved on this device — nothing to manage.</p>
+    </div>
+  </div>
+  <div class="a2hs-actions">
+    <button id="a2hs-install" hidden>Install</button>
+    <button id="a2hs-dismiss" class="a2hs-later">Not now</button>
+  </div>
 </div>
 
 <div id="toast" role="status" aria-live="polite"></div>
@@ -941,6 +985,7 @@ function cueTrack(it, autoplay, atTime){
   $('#seek').value = it.audio.duration ? Math.round(1000 * (pendingSeek || 0) / it.audio.duration) : 0;
   updateSeekFill();
   $('#playerbar').classList.add('visible');
+  a2hsLift();
   LS.set('ab-last', JSON.stringify({book: it.book.slug, slug: it.slug}));
   setMediaSession(it);
   document.title = it.title + ' — The Everything Library';
@@ -1932,6 +1977,46 @@ loadCatalog().then(route).catch(err => {
   document.querySelector('#view-home .lede').textContent =
     "Couldn't load the library. If you're offline, reconnect and reload.";
 });
+// ---------- add-to-home-screen: one gentle, one-time nudge on mobile ----------
+// Never on arrival (let them look around first), never twice, never when
+// already installed. Reassures — quiet auto-updates, data stays on device.
+let a2hsDeferred = null;
+function a2hsLift(){ const el = $('#a2hs'); if (el && !el.hidden) el.classList.toggle('lift', $('#playerbar').classList.contains('visible')); }
+function a2hsSettle(v){ LS.set('ab-a2hs', v); const el = $('#a2hs'); if (!el) return; el.classList.remove('show'); setTimeout(() => { el.hidden = true; }, 400); }
+window.addEventListener('beforeinstallprompt', e => {
+  // Android/desktop Chrome: keep the native prompt and offer one-tap install
+  e.preventDefault(); a2hsDeferred = e;
+  const el = $('#a2hs'); if (el && el.classList.contains('show')) $('#a2hs-install').hidden = false;
+});
+window.addEventListener('appinstalled', () => a2hsSettle('installed'));
+(function initA2hs(){
+  const el = $('#a2hs'); if (!el) return;
+  $('#a2hs-x').addEventListener('click', () => a2hsSettle('dismissed'));
+  $('#a2hs-dismiss').addEventListener('click', () => a2hsSettle('dismissed'));
+  $('#a2hs-install').addEventListener('click', async () => {
+    if (!a2hsDeferred) return;
+    a2hsDeferred.prompt();
+    const r = await a2hsDeferred.userChoice.catch(() => ({outcome: 'dismissed'}));
+    a2hsDeferred = null;
+    a2hsSettle(r.outcome === 'accepted' ? 'installed' : 'dismissed');
+  });
+  const os = document.documentElement.getAttribute('data-os');
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  // only nudge mobile visitors who haven't installed or dismissed already
+  if (standalone || LS.get('ab-a2hs') || (os !== 'apple' && os !== 'android')) return;
+  const share = '<span class="sh" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l4 4-1.42 1.42L13 6.83V15h-2V6.83L9.42 8.42 8 7l4-4zM5 12h2v6h10v-6h2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-6z"/></svg></span>';
+  $('#a2hs-how').innerHTML = os === 'apple'
+    ? `Tap ${share} <b>Share</b>, then <b>Add to Home Screen</b>.`
+    : `Open your browser menu, then <b>Add to Home screen</b>.`;
+  setTimeout(() => {
+    if (LS.get('ab-a2hs')) return; // settled while we waited
+    el.hidden = false;
+    if (a2hsDeferred) $('#a2hs-install').hidden = false;
+    a2hsLift();
+    requestAnimationFrame(() => el.classList.add('show'));
+  }, 4200);
+})();
+
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){
   navigator.serviceWorker.register('sw.js').then(reg => {
     // stay fresh without ever interrupting playback: HTML is network-first,
