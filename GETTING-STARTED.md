@@ -165,7 +165,10 @@ The `media/…` path exists precisely for that (see watch-outs).
 - The Netlify build command must keep **both** steps:
   `node tools/fetch-media.mjs && node tools/build-feeds.mjs`.
 - Don't rename or delete the `media-*` release **tags**. Assets inside can
-  change freely; the tag is the pipeline's address.
+  change freely; the tag is the pipeline's address. (The sync re-points each
+  tag at current `main` on every run — that's deliberate: GitHub reads the
+  workflow for a release-triggered run from the tag's commit, so a stale tag
+  would run a stale workflow.)
 
 **Editing the player (`index.html`)**
 - After any player change, **bump `CACHE` in `sw.js`** (v4 → v5 → …) so
