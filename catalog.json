@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-07-18T19:41:26Z",
+  "updated": "2026-07-19T00:34:29Z",
   "publisher": "Errerlabs",
   "mediaRepo": "kmay89/audio_book",
   "books": [
@@ -252,9 +252,144 @@
           "n": 16,
           "slug": "ch-machine",
           "title": "The Thinking Machine",
-          "audio": null,
+          "audio": {
+            "file": "grows__ch-machine.mp3",
+            "url": "media/grows__ch-machine.mp3",
+            "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine.mp3",
+            "bytes": 48658945,
+            "duration": 3041,
+            "assetId": 481924624,
+            "updated": "2026-07-19T00:34:09Z"
+          },
           "outline": null,
-          "slides": []
+          "slides": [
+            {
+              "file": "grows__ch-machine__slides.pdf",
+              "url": "media/grows__ch-machine__slides.pdf",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slides.pdf",
+              "type": "pdf"
+            },
+            {
+              "file": "grows__ch-machine__slide-01.jpg",
+              "url": "media/grows__ch-machine__slide-01.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-01.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-02.jpg",
+              "url": "media/grows__ch-machine__slide-02.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-02.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-03.jpg",
+              "url": "media/grows__ch-machine__slide-03.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-03.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-04.jpg",
+              "url": "media/grows__ch-machine__slide-04.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-04.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-05.jpg",
+              "url": "media/grows__ch-machine__slide-05.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-05.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-06.jpg",
+              "url": "media/grows__ch-machine__slide-06.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-06.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-07.jpg",
+              "url": "media/grows__ch-machine__slide-07.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-07.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-08.jpg",
+              "url": "media/grows__ch-machine__slide-08.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-08.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-09.jpg",
+              "url": "media/grows__ch-machine__slide-09.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-09.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-10.jpg",
+              "url": "media/grows__ch-machine__slide-10.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-10.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-11.jpg",
+              "url": "media/grows__ch-machine__slide-11.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-11.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-12.jpg",
+              "url": "media/grows__ch-machine__slide-12.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-12.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-13.jpg",
+              "url": "media/grows__ch-machine__slide-13.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-13.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-14.jpg",
+              "url": "media/grows__ch-machine__slide-14.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-14.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-15.jpg",
+              "url": "media/grows__ch-machine__slide-15.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-15.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-16.jpg",
+              "url": "media/grows__ch-machine__slide-16.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-16.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-17.jpg",
+              "url": "media/grows__ch-machine__slide-17.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-17.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-18.jpg",
+              "url": "media/grows__ch-machine__slide-18.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-18.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-19.jpg",
+              "url": "media/grows__ch-machine__slide-19.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-19.jpg",
+              "type": "image"
+            },
+            {
+              "file": "grows__ch-machine__slide-20.jpg",
+              "url": "media/grows__ch-machine__slide-20.jpg",
+              "sourceUrl": "https://github.com/kmay89/audio_book/releases/download/media-grows/grows__ch-machine__slide-20.jpg",
+              "type": "image"
+            }
+          ]
         },
         {
           "n": 17,
