@@ -229,5 +229,19 @@ class PlanIntegrityTests(unittest.TestCase):
         self.assertEqual(by_name(p)['1.m4a']['integrity'], 'OK')
 
 
+class PublishCommandTests(unittest.TestCase):
+    def test_order_is_delete_then_upload_then_dispatch(self):
+        cmds = O.publish_commands('media-grows', 'kmay89/audio_book',
+                                  ['grows__ch-a.m4a'], ['grows__ch-a.mp3'])
+        self.assertEqual(cmds[0][:3], ['gh', 'release', 'delete-asset'])
+        self.assertEqual(cmds[1][:3], ['gh', 'release', 'upload'])
+        self.assertEqual(cmds[-1], ['gh', 'workflow', 'run', 'sync-catalog.yml', '--repo', 'kmay89/audio_book'])
+
+    def test_no_upload_command_when_nothing_new(self):
+        cmds = O.publish_commands('media-grows', 'kmay89/audio_book', [], [])
+        self.assertTrue(all(c[:3] != ['gh', 'release', 'upload'] for c in cmds))
+        self.assertEqual(cmds[-1][:3], ['gh', 'workflow', 'run'])
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

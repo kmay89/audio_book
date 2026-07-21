@@ -1,0 +1,24 @@
+name: Production health check
+
+# Verify the live site actually serves everything the catalog promises.
+# Scheduled so a broken asset (a failed deploy, a clobbered release, an
+# expired cert) is caught within hours — the job fails loudly, which sends the
+# usual GitHub Actions failure notification.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "37 */6 * * *" # every 6 hours
+
+jobs:
+  healthcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check the live site
+        run: node tools/healthcheck.mjs
