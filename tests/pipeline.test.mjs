@@ -65,6 +65,16 @@ async function main(){
   })});
   ok(!r.ok && r.checks.some(c => c.name === 'feed-grows.xml' && !c.ok), 'a missing feed fails');
 
+  // a stalled URL must TIME OUT (fail), never hang the run
+  const hanging = (url, opts) => new Promise((_, reject) => {
+    if (opts && opts.signal)
+      opts.signal.addEventListener('abort', () => reject(Object.assign(new Error('aborted'), {name: 'AbortError'})));
+  });
+  const t0 = Date.now();
+  r = await runChecks(catalog, {base: 'https://x', concurrency: 4, timeoutMs: 30, fetchImpl: hanging});
+  ok(!r.ok && r.checks.some(c => /timed out/.test(c.detail)), 'a stalled URL times out and fails');
+  ok(Date.now() - t0 < 5000, 'the check returns promptly instead of hanging');
+
   // manifest normalization
   const m = manifestObject('media-grows', [
     {name: 'b.mp3', size: 2, digest: 'sha256:beef'},
