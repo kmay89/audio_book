@@ -30,6 +30,10 @@ Docs: `GETTING-STARTED.md` (step-by-step + watch-outs — **read it first**),
   (PDF decks → per-page slide images in CI), `fetch-media.mjs` +
   `build-feeds.mjs` (Netlify build steps), `duration.mjs` (stdlib MP3/M4A/WAV
   parsers), `make-icons.mjs` / `make-og.mjs` (asset regeneration).
+  `organize/organize.py` is the local staging desk — dump a book's raw media in
+  its inbox and it renames to convention, reconciling against the live release
+  (SHA-256 dedup, REPLACE detection, per-chapter fill status; stdlib Python,
+  unit-tested). The one non-Node tool, and local-only (never served/CI-critical).
 - `.github/workflows/` — `sync-catalog.yml` (normalize + sync, dispatch/daily),
   `ci.yml` (tests on every push/PR).
 - `tests/` — `duration.test.mjs` (units), `run.mjs` (85-assertion Playwright

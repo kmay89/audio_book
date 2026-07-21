@@ -55,23 +55,31 @@ Two ideas to hold on to:
 5. **Wait ~2–4 minutes**, then check the site: the chapter shows its real
    duration and plays. Done.
 
-**Bulk upload from the command line** (best for a whole book — browser
-drag-and-drop gets fragile past a few hundred MB): name your files by
-chapter **number** (`1.m4a`, `02 deck.pdf`, `5 infographic.png` …), then let
-the repo rename and upload them:
+**Bulk upload — the staging desk** (best for a whole book, and the safest way
+to add to a book that's already partly published). Dump the raw files into one
+folder and let `tools/organize/organize.py` reconcile them against what's
+already on the site: it renames by convention, **skips byte-identical files
+already uploaded**, flags anything that would overwrite a filled chapter (only
+touched with `--replace`), and refuses to guess on anything ambiguous.
 
 ```sh
 git clone https://github.com/kmay89/audio_book && cd audio_book
-node tools/rename-batch.mjs grows ~/Desktop/grows-files --dry-run   # preview
-node tools/rename-batch.mjs grows ~/Desktop/grows-files             # rename
-cd ~/Desktop/grows-files
-gh release upload media-grows * --repo kmay89/audio_book --clobber  # upload
-gh workflow run sync-catalog.yml --repo kmay89/audio_book           # publish
+# drop this book's files into its inbox (numbered 1.m4a, 1.pdf, "1 chart.png", 2.m4a …)
+open tools/organize/inbox/grows/
+python3 tools/organize/organize.py grows            # the plan — changes nothing
+python3 tools/organize/organize.py grows --apply    # do the renames
+# then run the upload + sync commands it prints for you
 ```
 
-(`gh` is the GitHub CLI — `brew install gh`, then `gh auth login` once.
-Never commit media into git; releases are the storage, `gh release upload`
-is the truck. `--clobber` overwrites same-name assets.)
+The plan shows every file's status — NEW / DUPLICATE / REPLACE / UNMATCHED /
+CONFLICT — plus the book's current fill state chapter by chapter, so you always
+see what's pending versus done. Arbitrary filenames work too via a `map.csv`
+in the inbox. Full reference: `tools/organize/README.md`.
+
+(`gh` is the GitHub CLI — `brew install gh`, then `gh auth login` once. Never
+commit media into git; releases are the storage, `gh release upload` is the
+truck. The older `tools/rename-batch.mjs` still does a quick number-only rename
+with no release awareness.)
 
 **Companions** ride in the same drag-and-drop, matched by filename:
 
