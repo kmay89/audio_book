@@ -36,9 +36,13 @@ Docs: `GETTING-STARTED.md` (step-by-step + watch-outs — **read it first**),
   unit-tested). The one non-Node tool, and local-only (never served/CI-critical).
   `lib-catalog.mjs` (shared) enumerates referenced assets + validates the
   catalog; `verify-catalog.mjs` is the CI/sync guard rail (fails on a
-  non-publishable catalog); `status.mjs` regenerates `STATUS.md`.
+  non-publishable catalog); `status.mjs` regenerates `STATUS.md`;
+  `healthcheck.mjs` verifies the live site (scheduled workflow); `manifest.mjs`
+  snapshots each release (`tools/manifests/<book>.json`).
 - `STATUS.md` — generated library fill dashboard (by `status.mjs`, rewritten by
-  the sync). Machine-owned; don't hand-edit.
+  the sync). `tools/manifests/` — committed SHA-256 release snapshots (by
+  `manifest.mjs`). Both machine-owned; don't hand-edit.
+- `.github/workflows/` also has `healthcheck.yml` (scheduled live-site check).
 - `.github/workflows/` — `sync-catalog.yml` (normalize + sync, dispatch/daily),
   `ci.yml` (tests on every push/PR).
 - `tests/` — `duration.test.mjs` (units), `run.mjs` (85-assertion Playwright

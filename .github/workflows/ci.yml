@@ -21,6 +21,8 @@ jobs:
         run: python3 tools/organize/test_organize.py
       - name: Catalog guard-rail tests
         run: node tests/catalog.test.mjs
+      - name: Pipeline tests (health check + manifest)
+        run: node tests/pipeline.test.mjs
       - name: Verify catalog is publishable
         run: node tools/verify-catalog.mjs
       - name: STATUS.md is current

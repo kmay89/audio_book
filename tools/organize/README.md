@@ -75,8 +75,13 @@ the upload command. Warnings are shown but don't block. Each plan line shows
 
 - `--apply` perform the renames (default is a plan only)
 - `--replace` also handle chapters whose slot is already filled
+- `--publish` after `--apply`, upload via `gh` + dispatch the sync + watch it
+  finish — the whole thing in one command (needs `gh` installed and authed)
 - `--offline` skip the release lookup (no duplicate/replace detection)
 - `--inbox <dir>` use a different folder
+
+The truly hands-off run: `python3 tools/organize/organize.py grows --apply --publish`
+— renames, uploads, fires the sync, and reports back when the chapter is live.
 
 `GITHUB_TOKEN` is optional (rate limits / private repos). The inbox is
 gitignored — media never enters the repo.

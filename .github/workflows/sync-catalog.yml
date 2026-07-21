@@ -52,14 +52,18 @@ jobs:
         run: node tools/verify-catalog.mjs
       - name: Refresh the status dashboard
         run: node tools/status.mjs
+      - name: Snapshot the release manifests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node tools/manifest.mjs
       - name: Commit if changed
         run: |
-          if git diff --quiet catalog.json STATUS.md; then
+          if git diff --quiet catalog.json STATUS.md tools/manifests; then
             echo "No catalog changes."
             exit 0
           fi
           git config user.name "catalog-sync"
           git config user.email "actions@github.com"
-          git add catalog.json STATUS.md
+          git add catalog.json STATUS.md tools/manifests
           git commit -m "Sync catalog from media releases"
           git push

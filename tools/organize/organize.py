@@ -44,7 +44,10 @@ import hashlib
 import json
 import os
 import re
+import shutil
+import subprocess
 import sys
+import time
 import urllib.request
 import urllib.error
 from pathlib import Path
@@ -591,6 +594,7 @@ def main():
     ap.add_argument('book', help='book slug from catalog.json (e.g. grows)')
     ap.add_argument('--apply', action='store_true', help='perform the renames (default: plan only)')
     ap.add_argument('--replace', action='store_true', help='also rename files whose chapter slot is already filled')
+    ap.add_argument('--publish', action='store_true', help='after --apply, upload via gh + dispatch the sync + watch it')
     ap.add_argument('--offline', action='store_true', help='skip the release lookup (no dup/replace detection)')
     ap.add_argument('--inbox', help='override the inbox folder (default tools/organize/inbox/<book>)')
     args = ap.parse_args()
@@ -679,6 +683,12 @@ def _print_report(plan, book, args, inbox, offline):
     elif approved:
         print(f"  Plan only. Re-run with --apply to rename {len(approved)} file(s).")
 
+    if args.apply and getattr(args, 'publish', False) and approved and not conflicts:
+        print('\n  Publishing…')
+        run_publish(approved, book, inbox)
+        print()
+        return
+
     dels = sorted({d for e in approved for d in e.get('deletes', [])})
     if dels:
         print('\n  Then delete the stale assets they replace:')
@@ -690,11 +700,49 @@ def _print_report(plan, book, args, inbox, offline):
         print(f"    cd {inbox} && gh release upload {book['releaseTag']} {names} "
               f"--repo {plan_repo()} --clobber")
         print(f"    gh workflow run sync-catalog.yml --repo {plan_repo()}")
+        if args.apply:
+            print('  (or re-run with --publish to do this automatically)')
     print()
 
 
 def plan_repo():
     return json.loads((ROOT / 'catalog.json').read_text())['mediaRepo']
+
+
+def publish_commands(tag, repo, targets, deletes):
+    """The exact gh commands to publish an approved plan: clear stale assets
+    first, upload the new ones, then dispatch the sync. Pure → testable."""
+    cmds = [['gh', 'release', 'delete-asset', tag, d, '--yes', '--repo', repo] for d in sorted(deletes)]
+    if targets:
+        cmds.append(['gh', 'release', 'upload', tag, *sorted(targets), '--repo', repo, '--clobber'])
+    cmds.append(['gh', 'workflow', 'run', 'sync-catalog.yml', '--repo', repo])
+    return cmds
+
+
+def run_publish(approved, book, inbox):
+    """Upload + dispatch the sync via gh, then watch the run and report."""
+    if not shutil.which('gh'):
+        print("  gh isn't installed — run the commands above by hand, or `brew install gh`.")
+        return
+    tag, repo = book['releaseTag'], plan_repo()
+    targets = [e['target'] for e in approved]
+    deletes = sorted({d for e in approved for d in e.get('deletes', [])})
+    for cmd in publish_commands(tag, repo, targets, deletes):
+        print('  $ ' + ' '.join(cmd))
+        if subprocess.run(cmd, cwd=str(inbox)).returncode != 0:
+            print('  ✗ that command failed — stopping so nothing is left half-done.')
+            return
+    print('  ✓ uploaded and sync dispatched — watching it publish…')
+    try:
+        time.sleep(5)  # let the dispatched run register
+        rid = subprocess.run(['gh', 'run', 'list', '--workflow', 'sync-catalog.yml', '--repo', repo,
+                              '-L', '1', '--json', 'databaseId', '-q', '.[0].databaseId'],
+                             capture_output=True, text=True).stdout.strip()
+        if rid:
+            subprocess.run(['gh', 'run', 'watch', rid, '--repo', repo, '--exit-status'])
+            print('  ✓ done. Give the site ~2 min to redeploy, then check the chapter.')
+    except Exception as e:
+        print(f'  (could not watch the run: {e} — check the Actions tab)')
 
 
 if __name__ == '__main__':

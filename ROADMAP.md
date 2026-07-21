@@ -53,6 +53,13 @@ change checklist in `GETTING-STARTED.md`.
 
 ## Shipped (newest first)
 
+- Production health check + one-step publish + release manifest:
+  `tools/healthcheck.mjs` (scheduled `healthcheck.yml`) fetches the live site
+  and fails loudly if any audio/slide URL 404s, loses range support, or a feed
+  breaks — a broken deploy is caught within hours, not by a listener.
+  `organize.py --publish` does upload → sync dispatch → watch in one command.
+  `tools/manifest.mjs` commits a SHA-256 snapshot of each release
+  (`tools/manifests/`) for audit + clobber recovery. Pure cores unit-tested.
 - Catalog guard rail + status dashboard: `tools/verify-catalog.mjs` fails CI and
   the sync if the catalog would publish something broken (dup slugs/assets,
   missing fields, a GitHub audio.url that iOS can't play); `tools/status.mjs`
