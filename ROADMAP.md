@@ -53,6 +53,11 @@ change checklist in `GETTING-STARTED.md`.
 
 ## Shipped (newest first)
 
+- Staging desk (`tools/organize/organize.py`): dump a book's raw media into one
+  inbox and it renames to convention while reconciling against the live release
+  — SHA-256 dedup (never re-uploads an identical file), REPLACE detection with
+  the exact delete-first set, per-chapter fill status, refuses to guess; pure
+  matcher, unit-tested in CI
 - First-visit "Add to Home Screen" nudge: one gentle, dismissible sheet on
   mobile (Apple = Share→Add steps; Android/Chrome = one-tap Install via
   `beforeinstallprompt`), delayed so it never lands on arrival, shown once

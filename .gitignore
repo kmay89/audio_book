@@ -1,2 +1,5 @@
 media/
 feed-*.xml
+tools/organize/inbox/
+__pycache__/
+*.pyc

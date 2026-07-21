@@ -17,6 +17,8 @@ jobs:
         run: node tests/duration.test.mjs
       - name: Filename parser unit tests
         run: node tests/sync-name.test.mjs
+      - name: Organizer unit tests (staging desk)
+        run: python3 tools/organize/test_organize.py
       - name: Install playwright
         working-directory: tests
         run: npm install && npx playwright install --with-deps chromium
