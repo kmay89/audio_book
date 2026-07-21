@@ -51,6 +51,26 @@ uploaded, with GitHub's SHA-256 digests), and your inbox (hashed locally):
 Nothing filled is ever overwritten without `--replace`, and no ambiguous file
 is ever renamed on a guess.
 
+## Integrity checks (it looks *inside* each file)
+
+Beyond matching, it opens every file to catch a wrong / corrupt / half-loaded
+one before it can be renamed or uploaded:
+
+- **Real type, not just extension** — magic-number sniff. A PDF saved as
+  `.m4a`, or bytes that are `m4a` under a `.mp3` name, are an **ERROR**.
+- **Empty / truncated** — a 0-byte file (failed copy), or audio that won't
+  decode, or a PDF with no end marker → **ERROR** (audio) / **warn** (pdf).
+- **Length is measured** — audio duration is parsed and shown (`[41:12]`), so a
+  mis-numbered file jumps out; suspiciously short audio warns. On a `--replace`
+  it compares against the **published** length and flags a big change.
+- **Duplicate content, not just duplicate names** — SHA-256 catches a file
+  that's identical to another in the batch, or already uploaded under a
+  different name (e.g. the same audio dropped in for two chapters).
+
+Files with an **ERROR** are listed and **held back** — never renamed, never in
+the upload command. Warnings are shown but don't block. Each plan line shows
+`[duration · pages · chapter title]` so you can eyeball it.
+
 ## Flags
 
 - `--apply` perform the renames (default is a plan only)
