@@ -13,6 +13,7 @@ on:
 jobs:
   healthcheck:
     runs-on: ubuntu-latest
+    timeout-minutes: 8  # backstop: a health check must never hang a runner
     steps:
       - uses: actions/checkout@v4
         with:

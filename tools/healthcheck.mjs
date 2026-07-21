@@ -19,10 +19,22 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 const MEDIA_OK = ['audio/', 'video/', 'application/pdf', 'image/', 'application/octet-stream'];
 
-async function checkAsset(base, asset, fetchImpl){
+// A monitoring check must never hang: bound every request so a stalled URL
+// becomes a failure, not a wedged job.
+async function withTimeout(fetchImpl, url, opts, timeoutMs){
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    return await fetchImpl(url, {...opts, signal: ctrl.signal});
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function checkAsset(base, asset, fetchImpl, timeoutMs){
   const url = base.replace(/\/$/, '') + '/' + asset.url.replace(/^\//, '');
   try {
-    const res = await fetchImpl(url, {headers: {Range: 'bytes=0-1'}, redirect: 'follow'});
+    const res = await withTimeout(fetchImpl, url, {headers: {Range: 'bytes=0-1'}, redirect: 'follow'}, timeoutMs);
     const ct = (res.headers.get('content-type') || '').toLowerCase();
     if (res.status !== 200 && res.status !== 206)
       return {name: asset.url, ok: false, detail: `HTTP ${res.status}`};
@@ -34,22 +46,26 @@ async function checkAsset(base, asset, fetchImpl){
       return {name: asset.url, ok: false, detail: 'no range support (206) — seeking would break'};
     return {name: asset.url, ok: true, detail: ct};
   } catch (e){
-    return {name: asset.url, ok: false, detail: e.message};
+    return {name: asset.url, ok: false, detail: reason(e, timeoutMs)};
   }
 }
 
-async function checkFeed(base, slug, fetchImpl){
+async function checkFeed(base, slug, fetchImpl, timeoutMs){
   const url = base.replace(/\/$/, '') + `/feed-${slug}.xml`;
   try {
-    const res = await fetchImpl(url, {redirect: 'follow'});
+    const res = await withTimeout(fetchImpl, url, {redirect: 'follow'}, timeoutMs);
     if (res.status !== 200) return {name: `feed-${slug}.xml`, ok: false, detail: `HTTP ${res.status}`};
     const body = await res.text();
     if (!body.includes('<rss') || !body.includes('<enclosure'))
       return {name: `feed-${slug}.xml`, ok: false, detail: 'not a valid feed with episodes'};
     return {name: `feed-${slug}.xml`, ok: true, detail: 'ok'};
   } catch (e){
-    return {name: `feed-${slug}.xml`, ok: false, detail: e.message};
+    return {name: `feed-${slug}.xml`, ok: false, detail: reason(e, timeoutMs)};
   }
+}
+
+function reason(e, timeoutMs){
+  return e && e.name === 'AbortError' ? `timed out (>${Math.round(timeoutMs / 1000)}s)` : (e.message || String(e));
 }
 
 async function pool(items, n, worker){
@@ -64,11 +80,11 @@ async function pool(items, n, worker){
   return out;
 }
 
-export async function runChecks(catalog, {base, fetchImpl = fetch, concurrency = 8} = {}){
+export async function runChecks(catalog, {base, fetchImpl = fetch, concurrency = 8, timeoutMs = 15000} = {}){
   const assets = referencedAssets(catalog);
-  const assetChecks = await pool(assets, concurrency, a => checkAsset(base, a, fetchImpl));
+  const assetChecks = await pool(assets, concurrency, a => checkAsset(base, a, fetchImpl, timeoutMs));
   const feedBooks = catalog.books.filter(b => (b.chapters || []).some(c => c.audio));
-  const feedChecks = await pool(feedBooks, concurrency, b => checkFeed(base, b.slug, fetchImpl));
+  const feedChecks = await pool(feedBooks, concurrency, b => checkFeed(base, b.slug, fetchImpl, timeoutMs));
   const checks = [...assetChecks, ...feedChecks];
   return {checks, ok: checks.every(c => c.ok), assets: assets.length, feeds: feedChecks.length};
 }
@@ -81,11 +97,11 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   console.log(`\n  Health check against ${base}\n`);
   let catalog = local;
   try {
-    const res = await fetch(base.replace(/\/$/, '') + '/catalog.json', {cache: 'no-cache'});
+    const res = await withTimeout(fetch, base.replace(/\/$/, '') + '/catalog.json', {cache: 'no-cache'}, 15000);
     if (res.ok) catalog = await res.json();
     else console.log(`  (using local catalog; live catalog.json returned ${res.status})`);
   } catch (e){
-    console.log(`  (using local catalog; couldn't fetch live: ${e.message})`);
+    console.log(`  (using local catalog; couldn't fetch live: ${reason(e, 15000)})`);
   }
   const {checks, ok, assets, feeds} = await runChecks(catalog, {base});
   for (const c of checks.filter(c => !c.ok)) console.log(`  ✗ ${c.name} — ${c.detail}`);
