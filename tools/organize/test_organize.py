@@ -2,8 +2,27 @@
 """Unit tests for organize.build_plan — the meticulous matcher. Pure, no network,
 no disk: the catalog and the release state are injected. Run: python3 test_organize.py"""
 
+import struct
 import unittest
 import organize as O
+
+
+def wav_bytes(seconds, rate=8000):
+    data = b'\x00\x00' * (seconds * rate)
+    hdr = b'RIFF' + struct.pack('<I', 36 + len(data)) + b'WAVE'
+    hdr += b'fmt ' + struct.pack('<IHHIIHH', 16, 1, 1, rate, rate * 2, 2, 16)
+    hdr += b'data' + struct.pack('<I', len(data))
+    return hdr + data
+
+
+def mp3_cbr(frames=100):
+    ln = (1152 // 8 * 128000) // 44100  # 417, MPEG1 L3 44.1k 128k
+    f = bytearray(ln)
+    f[0], f[1], f[2], f[3] = 0xff, 0xfb, 0x90, 0x00
+    return bytes(f) * frames
+
+
+M4A_HEAD = b'\x00\x00\x00\x18ftypM4A \x00\x00\x00\x00M4A mp42'
 
 CATALOG = {
     'mediaRepo': 'kmay89/audio_book',
@@ -119,6 +138,95 @@ class MatchTests(unittest.TestCase):
         rows = {r['n']: r for r in p['chapter_status']}
         self.assertTrue(rows[16]['audio'])
         self.assertFalse(rows[1]['audio'])
+
+
+class DurationTests(unittest.TestCase):
+    def test_wav_duration(self):
+        self.assertAlmostEqual(O.audio_duration(wav_bytes(3)), 3.0, places=2)
+
+    def test_mp3_cbr_duration(self):
+        self.assertAlmostEqual(O.audio_duration(mp3_cbr(100)), 100 * 1152 / 44100, places=2)
+
+    def test_garbage_has_no_duration(self):
+        self.assertIsNone(O.audio_duration(b'not audio at all' * 10))
+
+
+class InspectTests(unittest.TestCase):
+    def probs(self, name, data):
+        return O.inspect(name, data)['problems']
+
+    def test_empty_file_is_error(self):
+        self.assertTrue(any(p[0] == 'ERROR' for p in self.probs('7.m4a', b'')))
+
+    def test_wrong_type_is_error(self):
+        # a PDF saved with an audio extension
+        p = self.probs('7.m4a', b'%PDF-1.5\n...')
+        self.assertTrue(any(p_[0] == 'ERROR' and 'pdf' in p_[1] for p_ in p))
+
+    def test_mislabeled_audio_extension_is_error(self):
+        p = self.probs('7.mp3', M4A_HEAD + b'\x00' * 40)
+        self.assertTrue(any(p_[0] == 'ERROR' for p_ in p))
+
+    def test_valid_wav_reports_duration_no_error(self):
+        info = O.inspect('5.wav', wav_bytes(45))
+        self.assertIsNone(next((p for p in info['problems'] if p[0] == 'ERROR'), None))
+        self.assertAlmostEqual(info['duration'], 45.0, places=1)
+
+    def test_short_audio_warns(self):
+        p = self.probs('5.wav', wav_bytes(3))
+        self.assertTrue(any(p_[0] == 'WARN' and 'whole chapter' in p_[1] for p_ in p))
+
+    def test_truncated_pdf_warns_no_eof(self):
+        p = self.probs('5.pdf', b'%PDF-1.4\n/Type /Page \n(no trailer here)')
+        self.assertTrue(any('end marker' in p_[1] for p_ in p))
+
+    def test_valid_pdf_counts_pages(self):
+        data = b'%PDF-1.4\n/Type /Page \n/Type /Page \n%%EOF'
+        info = O.inspect('5.pdf', data)
+        self.assertEqual(info['pages'], 2)
+        self.assertFalse(any(p[0] == 'ERROR' for p in info['problems']))
+
+
+CATALOG_DUR = {
+    'mediaRepo': 'kmay89/audio_book',
+    'books': [{
+        'slug': 'grows', 'releaseTag': 'media-grows',
+        'chapters': [
+            {'n': 1, 'slug': 'ch-origins', 'title': 'A'},
+            {'n': 16, 'slug': 'ch-machine', 'title': 'The Thinking Machine',
+             'audio': {'file': 'grows__ch-machine.mp3', 'duration': 3000}},
+        ],
+    }],
+}
+
+
+class PlanIntegrityTests(unittest.TestCase):
+    def test_error_probe_holds_item_back(self):
+        s = [{'name': '1.m4a', 'sha256': 'a', 'size': 5,
+              'probe': {'problems': [['ERROR', 'bad header']]}}]
+        p = O.build_plan('grows', CATALOG, s, {})
+        self.assertEqual(by_name(p)['1.m4a']['integrity'], 'ERROR')
+
+    def test_replace_flags_big_length_change(self):
+        release = {'grows__ch-machine.mp3': {'sha256': 'old', 'size': 9}}
+        s = [{'name': '16.m4a', 'sha256': 'new', 'size': 9,
+              'probe': {'duration': 120, 'problems': []}}]
+        p = O.build_plan('grows', CATALOG_DUR, s, release)
+        e = by_name(p)['16.m4a']
+        self.assertEqual(e['status'], O.REPLACE)
+        self.assertTrue(any('length change' in m for _, m in e['problems']))
+
+    def test_identical_bytes_in_batch_warn(self):
+        s = [{'name': '1.m4a', 'sha256': 'dup', 'size': 5, 'probe': {'problems': []}},
+             {'name': '16.m4a', 'sha256': 'dup', 'size': 5, 'probe': {'problems': []}}]
+        p = O.build_plan('grows', CATALOG, s, {})
+        e = by_name(p)['1.m4a']
+        self.assertTrue(any('identical bytes' in m for _, m in e['problems']))
+
+    def test_clean_file_is_ok(self):
+        s = [{'name': '1.m4a', 'sha256': 'a', 'size': 5, 'probe': {'duration': 2000, 'problems': []}}]
+        p = O.build_plan('grows', CATALOG, s, {})
+        self.assertEqual(by_name(p)['1.m4a']['integrity'], 'OK')
 
 
 if __name__ == '__main__':

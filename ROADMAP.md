@@ -57,7 +57,10 @@ change checklist in `GETTING-STARTED.md`.
   inbox and it renames to convention while reconciling against the live release
   — SHA-256 dedup (never re-uploads an identical file), REPLACE detection with
   the exact delete-first set, per-chapter fill status, refuses to guess; pure
-  matcher, unit-tested in CI
+  matcher, unit-tested in CI. Also inspects each file's bytes: magic-number type
+  check, measured audio duration (shown + compared to the published length),
+  empty/truncated detection, and duplicate-content-under-another-name — a failed
+  integrity check holds the file back from any rename or upload
 - First-visit "Add to Home Screen" nudge: one gentle, dismissible sheet on
   mobile (Apple = Share→Add steps; Android/Chrome = one-tap Install via
   `beforeinstallprompt`), delayed so it never lands on arrival, shown once
