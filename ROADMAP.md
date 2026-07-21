@@ -53,6 +53,11 @@ change checklist in `GETTING-STARTED.md`.
 
 ## Shipped (newest first)
 
+- Catalog guard rail + status dashboard: `tools/verify-catalog.mjs` fails CI and
+  the sync if the catalog would publish something broken (dup slugs/assets,
+  missing fields, a GitHub audio.url that iOS can't play); `tools/status.mjs`
+  regenerates `STATUS.md` (whole-library fill state) on every publish. Shared
+  `lib-catalog.mjs`, unit-tested.
 - Staging desk (`tools/organize/organize.py`): dump a book's raw media into one
   inbox and it renames to convention while reconciling against the live release
   — SHA-256 dedup (never re-uploads an identical file), REPLACE detection with

@@ -34,6 +34,11 @@ Docs: `GETTING-STARTED.md` (step-by-step + watch-outs — **read it first**),
   its inbox and it renames to convention, reconciling against the live release
   (SHA-256 dedup, REPLACE detection, per-chapter fill status; stdlib Python,
   unit-tested). The one non-Node tool, and local-only (never served/CI-critical).
+  `lib-catalog.mjs` (shared) enumerates referenced assets + validates the
+  catalog; `verify-catalog.mjs` is the CI/sync guard rail (fails on a
+  non-publishable catalog); `status.mjs` regenerates `STATUS.md`.
+- `STATUS.md` — generated library fill dashboard (by `status.mjs`, rewritten by
+  the sync). Machine-owned; don't hand-edit.
 - `.github/workflows/` — `sync-catalog.yml` (normalize + sync, dispatch/daily),
   `ci.yml` (tests on every push/PR).
 - `tests/` — `duration.test.mjs` (units), `run.mjs` (85-assertion Playwright
