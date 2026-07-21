@@ -48,14 +48,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node tools/sync.mjs
+      - name: Verify the synced catalog is publishable
+        run: node tools/verify-catalog.mjs
+      - name: Refresh the status dashboard
+        run: node tools/status.mjs
       - name: Commit if changed
         run: |
-          if git diff --quiet catalog.json; then
+          if git diff --quiet catalog.json STATUS.md; then
             echo "No catalog changes."
             exit 0
           fi
           git config user.name "catalog-sync"
           git config user.email "actions@github.com"
-          git add catalog.json
+          git add catalog.json STATUS.md
           git commit -m "Sync catalog from media releases"
           git push
